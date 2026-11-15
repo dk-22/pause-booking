@@ -13,15 +13,19 @@ Open http://localhost:4200. `npm start` uses the development configuration with 
 
 ## Interface
 
-All active screens use Spartan's Nova components and default neutral theme. The original custom UI has been removed, including particle effects, GSAP, legacy stylesheets, custom cards, dialog wrappers and notification styling.
+Pause has its own design system, described in `design-system/DESIGN.md`: linen paper, vetiver green, Young Serif for headings and DM Sans for text. Spartan (Helm) components still provide behaviour, focus management and accessibility; their look is set in `src/theme.css`.
 
-- `src/booking-page.html`: campaign/date selection, time table, booking form and confirmation.
-- `src/admin-page.html`: sign-in, campaign table/editor, settings, history and confirmations.
-- `src/bookings-page.html`: booking filters, date-grouped tables and booking editor.
+- `src/booking-page.html` + `src/main.ts`: the employee booking page. A green panel holds the campaign choice; days are tiles with a fill bar; times are grouped by part of day with attendee initials; the booking dialog offers the closest free times if a time fills, and ends in a confirmation pass with a calendar download.
+- `src/admin-page.html` + `src/admin.ts`: sign-in, campaign list (summary, fill bars, on-row status switch), campaign editor (date cards, visibility choice, live preview), business units (chips), profile editing and all confirmations.
+- `src/bookings-page.html` + `src/bookings.ts`: bookings grouped by day and time, search with highlighting, CSV download, printable attendance sheet, edit and cancel.
+- `src/admin-users.html` + `src/admin-users.ts`: administrators as people cards with an access switch. Administrators edit only their own name, from the account menu.
 - `src/ui`: source-owned Helm components from Spartan 1.9.0; see its README and MIT license.
-- `src/theme.css`: Tailwind v4 setup and standard semantic theme tokens. Fonts are bundled locally.
+- `src/theme.css`: Tailwind v4 setup, tokens, booking-page styles (`pz-` classes) and the admin skin (`body.pa`, `pa-` classes).
+- `src/fonts`: Young Serif (SIL Open Font License), bundled locally with DM Sans.
 
-Notifications use Spartan Sonner at the top right. Dialogs and alert dialogs use Spartan's own focus, keyboard and transition behavior. There are no application-specific component CSS overrides.
+Employee codes accept digits only, on the booking form and in the admin. Wording is generic: campaigns can be for any bookable activity.
+
+Two rules are enforced in the interface only, not yet in the database: digits-only employee codes, and administrators changing only their own name.
 
 ## Browser checks
 
@@ -30,7 +34,7 @@ npx playwright install chromium
 npm run test:ui
 ```
 
-The suite starts a development server on port 4201 if needed. It uses mocked Supabase responses and blocks hosted realtime connections; it does not create live bookings or send email. Tests cover employee booking, duplicate warnings, campaign/date selection, keyboard focus, mobile layouts, admin edits, confirmations, business units and email-form submission.
+The suite (`tests/pause-ui.spec.ts`) starts a development server on port 4201 if needed. It uses mocked Supabase responses and blocks hosted realtime connections; it does not create live bookings or send email. Tests cover the booking flow (digits-only code, duplicate warning, a time filling up, the confirmation pass and calendar file), business-unit pickers, phone layouts, and in the admin: sign-in, the campaign list and editor, bookings (edit, cancel, download), business units, administrators and profile editing.
 
 ## Supabase setup
 
@@ -84,19 +88,19 @@ Build with `npm run build`. Host `dist/booking-massage/browser` on a static host
 Browser mocks and a local build do not validate live SMTP, hosted Realtime or production database policies. Cancellation, reminders and production abuse protection are separate features.
 
 
-The Spartan sidebar holds Pause branding at the top and the account dropdown at the bottom, replacing the signed-in admin navbar. Its content toggle collapses it to icons on desktop. The fixed sidebar provides Campaigns, Bookings, Business units and Administrators. On mobile it opens as a Sheet. Apply migration 014 to enable administrator management. All active administrators share management permissions. Email addresses stay unchanged when editing an existing account; deactivate the old account and add the corrected address if necessary. Self-deactivation is blocked on the server. New accounts use the existing passwordless sign-in flow; adding an administrator does not send an email.
+The admin sidebar holds Pause branding at the top and the account menu (Edit profile, Sign out) at the bottom. It collapses to icons on desktop and opens as a sheet on mobile. It provides Campaigns, Bookings, Business units and Administrators, plus a link that opens the booking page in a new tab. Apply migration 014 to enable administrator management. All active administrators share the same permissions. Email addresses cannot be changed; deactivate the old account and add the corrected address if necessary. Self-deactivation is blocked on the server. New accounts use the existing passwordless sign-in flow; adding an administrator does not send an email.
 
 Administrator changes are recorded in audit logs and use update timestamps to reject stale edits. `supabase/tests/admin-management.sql` exercises creation, edits, activation, self-deactivation protection and unauthorized access in a disposable database.
 
 
-Administrators can cancel a confirmed booking from its table row after confirming an Alert Dialog. Apply migration 015 first. Cancelled rows stay visible with the administrator’s name and Mauritius timestamp; their edit/cancel actions are removed. Cancellation releases capacity and removes only cancelled attendees from public slot names. The employee can make a new booking with a new request reference. Duplicate cancellations do not release capacity twice or change the original cancellation attribution. `supabase/tests/cancel-booking.sql` covers cancellation, stale edits, retries, rebooking and permission checks.
+Administrators can cancel a confirmed booking from its menu on the Bookings screen, or from the Edit booking dialog, after confirming. Apply migration 015 first. Cancelled bookings stay listed under their time slot, behind “Show cancelled”, with the administrator’s name and Mauritius timestamp. Cancellation releases capacity and removes only cancelled attendees from public slot names. The employee can make a new booking with a new request reference. Duplicate cancellations do not release capacity twice or change the original cancellation attribution. `supabase/tests/cancel-booking.sql` covers cancellation, stale edits, retries, rebooking and permission checks.
 
 
-The employee booking screen uses three numbered sections on the same page: choose a campaign (Spartan Select), choose a date (Radio Group), then select a time (Table and Button). Multiple campaigns require an explicit choice; a lone campaign or date is selected automatically. All form dropdowns use Spartan Select, including filters, business units, booking destinations and time hours/minutes. Action menus continue to use Dropdown Menu. Empty states explain the next action before any times are shown. Skeletons cover only fetched values while headings remain visible. Selecting a time opens the existing confirmation form without extra Next/Back steps.
+On the employee booking page, a lone campaign is selected automatically and the page opens on the first day that still has places. Business units appear as chips for up to eight units and as a searchable A to Z list for more, with “Other” last. Choosing a time opens the booking dialog directly.
 
 Admin booking status filters: apply `supabase/migrations/016_booking_status_filter.sql` in the Supabase SQL Editor. This adds an admin-only paginated query for Confirmed and Cancelled bookings; existing all-status queries remain compatible.
 
-Pagination: apply `supabase/migrations/017_ten_rows_per_page.sql` for 10 rows per page in campaigns, bookings, and administrators. This updates both booking query variants and the administrator directory without removing data.
+Pagination: apply `supabase/migrations/017_ten_rows_per_page.sql` for 10 rows per page in campaigns and administrators. The Bookings screen loads every booking of the selected campaign, ten at a time, so it can group, total and export them; it is capped at 2,000 bookings per campaign. The campaign list summary and sort order cover the campaigns on the current page.
 
 
 ### Admin-only sign-in requests

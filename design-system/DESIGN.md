@@ -1,22 +1,40 @@
-# Pause — Spartan interface
+# Pause design system
 
-The application uses Spartan's Nova components and standard neutral theme throughout. The earlier custom visual system has been discarded.
+Pause is a booking tool for employee wellness campaigns. The interface should feel calm, considered and quick: an editorial look with as few steps as possible between opening the page and holding a place.
 
-## Page structure
+## Foundations
 
-- Employee booking: a card for campaign and date selection alongside a standard time table. Selecting Book opens a Spartan dialog with appointment details and employee fields. Confirmation appears after the booking transaction succeeds.
-- Admin sign-in: a standard card and email field; Enter submits the form.
-- Administration: Spartan tabs for campaigns and business units. Campaigns appear in a searchable table with status badges and a dropdown action menu.
-- Campaign editor: standard field groups, date table, radio group for visibility, date dialog, and alert-dialog confirmations.
-- Bookings: filter fields and a table for each date. A standard dialog edits employee details or moves the reservation.
-- Notifications: Spartan Sonner, top-right, with one visible notification and a close button.
+| Token | Value | Use |
+|---|---|---|
+| Linen | `#EDECE3` | Page background |
+| Sheet | `#FAF9F4` | Cards and dialogs |
+| Ink | `#1C2A24` | Text |
+| Vetiver | `#2C5545` | Primary actions, selection, brand |
+| Stone | `#5C6A62` | Secondary text |
+| Rule | `#D5D3C5` | Hairlines and borders |
+| Sun | `#D9A441` | The one warm accent: live, new, nearly full |
+| Brick | `#A13D2B` | Destructive actions and errors |
 
-## Components and behavior
+- **Type:** Young Serif for headings, times and numbers that matter; DM Sans for everything else. Both are bundled locally.
+- **Shape:** pills for buttons and chips, 12px fields, 18 to 24px cards.
+- **Depth:** two surfaces. A deep green panel (gradient, grain, slow ripples) carries identity; bright sheets carry the work and float on layered shadows.
+- **Light only.** There is no dark theme.
 
-No bespoke stylesheets, particle effects, animation directives, custom dialog wrappers, or custom notification implementations remain. Semantic HTML and Tailwind utilities provide layout around the Spartan components. Reduced-motion preferences are respected. Forms expose labels and validation errors, and overlays use Spartan's focus management.
+## Principles
 
-Supabase transactions, authorization, realtime subscriptions, expiry refresh, audit history, search and pagination remain intact. UI work does not apply database migrations or change hosted data.
+1. **Show, don’t make people open.** Availability, fill and attendees are visible without a click: fill bars on days, initials on times, “36 of 93” on campaigns.
+2. **One obvious action.** Rows are clickable; repeated per-row buttons are replaced by the row itself, a switch, or a small menu.
+3. **Free things lead.** Bookable times are full tiles; taken times shrink to struck-through chips.
+4. **Never a dead end.** When a time fills, the dialog offers the closest free times and keeps the person’s details.
+5. **Changes are visible before saving.** New and removed items are marked, with Undo, and the save bar says whether anything is unsaved.
+6. **Motion answers an action or marks one moment.** One entrance on load, the confirmation pass, and live updates. Everything respects reduced-motion settings.
+7. **Plain words.** Sentence case, no jargon, and nothing that assumes what is being booked.
+
+## Where things live
+
+- `src/theme.css`: tokens, the booking page (`pz-` classes, in the `components` layer) and the admin skin (`body.pa` and `pa-` classes, unlayered so they restyle Spartan components, including those rendered in overlays).
+- Spartan (Helm) components in `src/ui` supply behaviour, focus management and accessibility.
 
 ## Verification
 
-The Playwright suite mocks backend responses and blocks realtime connections to the hosted project. It checks booking validation and confirmation, campaign/date selection, keyboard focus restoration, admin editing, visibility and deletion confirmations, settings, email-form submission, and mobile overflow. This does not verify live SMTP delivery or hosted database behavior.
+`tests/pause-ui.spec.ts` covers both sides with mocked backend responses. It does not verify live email delivery, hosted realtime or database policies.
