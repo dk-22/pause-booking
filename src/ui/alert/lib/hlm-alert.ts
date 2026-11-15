@@ -21,7 +21,6 @@ export type AlertVariants = VariantProps<typeof alertVariants>;
 	exportAs: 'hlmAlert',
 	host: {
 		'data-slot': 'alert',
-		'[attr.data-variant]': 'variant()',
 		role: 'alert',
 	},
 })
