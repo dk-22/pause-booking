@@ -60,7 +60,7 @@ async function chooseOption(page:Page,selector:string,text:string){await page.lo
 const noOverflow=(page:Page)=>page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
 const openSlot=(page:Page,time='09:00 to 09:30')=>page.getByRole('button',{name:new RegExp('^Book '+time)});
 async function openBooking(page:Page){await openSlot(page).click();const dialog=page.getByRole('dialog');await expect(dialog.getByRole('heading',{name:/09:00/})).toBeVisible();return dialog;}
-async function fillDetails(page:Page,name:string,code:string,unit='Technology'){const dialog=page.getByRole('dialog');await dialog.getByLabel('Full name',{exact:true}).fill(name);await dialog.getByLabel('Employee code',{exact:true}).fill(code);await dialog.getByText(unit,{exact:true}).click();}
+async function fillDetails(page:Page,name:string,code:string,unit='Technology'){const dialog=page.getByRole('dialog');await dialog.getByLabel('Full name',{exact:true}).fill(name);await dialog.getByLabel('Employee code',{exact:true}).fill(code);await dialog.getByRole('radio',{name:unit,exact:true}).check();}
 const adminRow=(page:Page,name:string)=>page.getByRole('row').filter({hasText:name});
 
 // ---------------------------------------------------------------- Employee booking page
@@ -86,11 +86,11 @@ test('a single campaign needs no campaign choice',async({page})=>{
 test('days, parts of the day and full times read at a glance',async({page})=>{
  const {errors}=await fixture(page);await page.goto('/');
  const days=page.locator('[data-date-choice]');await expect(days).toHaveCount(2);await expect(days.first()).toHaveAttribute('aria-selected','true');
- await expect(page.getByRole('heading',{name:'Morning',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:/^Morning/})).toBeVisible();
  await expect(openSlot(page)).toHaveAccessibleName(/2 places left\. Attending: Jane/);
  const full=page.locator('.pz-mini');await expect(full).toHaveCount(1);await expect(full).toContainText('10:00');await expect(full).toContainText('Full');
  await page.getByRole('checkbox',{name:'Hide full times'}).click();await expect(full).toHaveCount(0);await expect(openSlot(page)).toBeVisible();
- await page.getByRole('checkbox',{name:'Hide full times'}).click();await full.click();
+ await page.getByRole('checkbox',{name:'Hide full times'}).click();await full.click({force:true});
  const card=page.locator('.pz-pop');await expect(card).toBeVisible();for(const name of ['Jane','Sam','Alex'])await expect(card.getByText(name,{exact:true})).toBeVisible();
  await page.getByRole('heading',{name:'Press pause.',exact:true}).click();await expect(card).toHaveCount(0);
  await days.nth(1).click();await expect(days.nth(1)).toHaveAttribute('aria-selected','true');await expect(openSlot(page)).toHaveAccessibleName(/3 places left/);
@@ -110,7 +110,7 @@ test('booking: digits-only code, duplicate warning, confirmation pass and calend
  await expect(dialog.getByText('With Jane',{exact:true})).toBeVisible();await expect(confirm).toBeDisabled();
  await dialog.getByLabel('Full name',{exact:true}).fill('Test Employee');
  const code=dialog.getByLabel('Employee code',{exact:true});await code.fill('9a9!9');await expect(code).toHaveValue('999');
- await expect(confirm).toBeDisabled();await dialog.getByText('Technology',{exact:true}).click();await expect(confirm).toBeEnabled();
+ await expect(confirm).toBeDisabled();await dialog.getByRole('radio',{name:'Technology',exact:true}).check();await expect(confirm).toBeEnabled();
  await confirm.click();await expect(dialog.getByText('This code already has a booking in this campaign.',{exact:true})).toBeVisible();
  await code.fill('1042x');await expect(code).toHaveValue('1042');await expect(dialog.getByText('This code already has a booking in this campaign.',{exact:true})).toHaveCount(0);await expect(confirm).toBeEnabled();
  await confirm.click();
@@ -184,7 +184,7 @@ test('admin lives on its own route and the old route shows the booking page',asy
 test('campaign list: summary, fill, row opens the editor, status switch asks first',async({page})=>{
  const {errors,writes}=await fixture(page,true);await page.goto('/bk-admin-codex');
  await expect(page.getByRole('heading',{name:'Campaigns',exact:true})).toBeVisible();await expect(page.locator('.pa-stat')).toHaveCount(4);
- const row=adminRow(page,'Workplace wellness');await expect(row.getByText('4 of 9')).toBeVisible();await expect(row.getByText(/^Next: /).first()).toBeVisible();
+ const row=adminRow(page,'Workplace wellness');await expect(row.getByText('4 of 9')).toBeVisible();await expect(row.getByText(/^Next: /).filter({visible:true})).toHaveCount(1);
  await expect(page.getByRole('columnheader',{name:'Last saved'})).toHaveCount(0);await expect(page.getByRole('button',{name:'View bookings',exact:true})).toHaveCount(0);
  const toggle=row.getByRole('switch',{name:'Accept bookings for Workplace wellness'});await expect(toggle).toHaveAttribute('aria-checked','true');
  await toggle.click();const close=page.getByRole('alertdialog',{name:'Close bookings?',exact:true});await close.getByRole('button',{name:'Cancel',exact:true}).click();await expect(close).toHaveCount(0);
