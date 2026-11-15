@@ -520,6 +520,10 @@ body.pa [data-sonner-toast][data-type=error] [data-icon]{color:#F6F3EA}
 body.pa [data-sonner-toast] [data-description]{color:rgb(246 243 234 / .78);font-weight:400}
 body.pa [data-sonner-toast] [data-close-button]{left:auto;right:.625rem;top:50%;transform:translateY(-50%);width:1.75rem;height:1.75rem;border:0;border-radius:999px;background:rgb(246 243 234 / .14);color:#F6F3EA}
 body.pa [data-sonner-toast] [data-close-button]:hover{background:rgb(246 243 234 / .28)}
+@media (min-width:601px){body.pa [data-sonner-toaster]{--width:26rem!important}}
+body.pa [data-sonner-toast]{min-height:3.5rem;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .35s,height .45s cubic-bezier(.2,.8,.2,1),filter .35s,box-shadow .2s}
+body.pa [data-sonner-toast][data-front=false][data-expanded=false]{filter:brightness(.82);box-shadow:0 1px 0 rgb(255 255 255 / .1) inset,0 10px 20px -14px rgb(21 42 34 / .6)}
+body.pa [data-sonner-toast][data-expanded=true]{box-shadow:0 1px 0 rgb(255 255 255 / .12) inset,0 14px 28px -16px rgb(21 42 34 / .7)}
 
 /* Status badges: tinted, with a dot */
 body.pa [data-slot=badge]{height:1.625rem;padding-inline:.625rem;font-size:.75rem;font-weight:600;gap:.375rem}
