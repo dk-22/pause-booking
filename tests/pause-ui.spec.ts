@@ -305,8 +305,8 @@ test('admin fits a phone: navigation drawer, campaigns and bookings',async({page
 test('icons are served on the booking page and the admin',async({page})=>{
  await fixture(page,true);
  for(const path of ['/','/bk-admin-codex']){
-  await page.goto(path);const favicon=page.locator('link[rel="icon"][sizes="32x32"]');await expect(favicon).toHaveAttribute('href','brand/favicon-32x32.png?v=2');
-  for(const asset of ['/favicon.ico?v=2','/brand/favicon-32x32.png?v=2','/brand/favicon-16x16.png?v=2']){const response=await page.request.get(asset);expect(response.status()).toBe(200);expect(response.headers()['content-type']).not.toContain('text/html');}
+  await page.goto(path);const favicon=page.locator('link[rel="icon"][sizes="32x32"]');await expect(favicon).toHaveAttribute('href','brand/favicon-32x32.png?v=3');
+  for(const asset of ['/favicon.ico?v=3','/brand/favicon-32x32.png?v=3','/brand/favicon-16x16.png?v=3']){const response=await page.request.get(asset);expect(response.status()).toBe(200);expect(response.headers()['content-type']).not.toContain('text/html');}
   const svg=await page.request.get('/brand/pause-icon.svg');expect(svg.status()).toBe(200);expect(await svg.text()).toContain('viewBox="0 0 64 64"');
  }
 });
