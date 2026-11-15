@@ -15,13 +15,13 @@
  </hlm-sidebar>
  }
  <main hlmSidebarInset class="min-w-0">
-@if(!admin()){<header class="border-b"><div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-8"><a hlmBtn variant="ghost" href="./" class="h-auto flex-col items-start gap-0.5 px-2 py-1"><span class="text-lg font-semibold leading-tight">Pause</span><span class="text-xs font-normal text-muted-foreground">Employee Wellness</span></a><a hlmBtn variant="ghost" href="./">Employee bookings</a></div></header>}
+@if(!admin()){<header class="employee-brand border-b"><div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-8"><a hlmBtn variant="ghost" href="./" class="h-auto gap-3 px-2 py-1"><img src="brand/pause-icon.svg" width="36" height="36" alt=""/><span class="flex flex-col items-start gap-0.5"><span class="text-lg font-semibold leading-tight">Pause</span><span class="text-xs font-normal text-muted-foreground">Employee Wellness</span></span></a><a hlmBtn variant="ghost" href="./">Employee bookings</a></div></header>}
 <ng-template #userMenu><div hlmDropdownMenu class="w-64" (keydown.escape)="closeAccountMenu($event)"><div hlmDropdownMenuLabel class="flex items-center gap-2 p-2"><span hlmAvatar><span hlmAvatarFallback>{{initials()}}</span></span><div class="min-w-0"><p class="truncate text-sm font-semibold text-foreground">{{profileName()||'Administrator'}}</p><p class="truncate font-normal">{{profileEmail()}}</p></div></div><div hlmDropdownMenuSeparator></div><a hlmDropdownMenuItem href="./" (keydown.escape)="closeAccountMenu($event)">Employee bookings</a><div hlmDropdownMenuSeparator></div><button hlmDropdownMenuItem (keydown.escape)="closeAccountMenu($event)" (triggered)="signOutDialog.open()">Sign out</button></div></ng-template>
 <div class="admin-workspace mx-auto w-full min-w-0 max-w-7xl space-y-6 px-4 py-6 sm:px-8">
  @if(!ready()){
   <p class="text-sm text-muted-foreground" role="status">Verifying administrator access…</p>
  }@else if(!admin()){
-  <div class="flex min-h-[65vh] items-center justify-center"><section hlmCard class="w-full max-w-md">
+  <div class="flex min-h-[65vh] items-center justify-center"><section hlmCard class="admin-sign-in w-full max-w-md">
    <div hlmCardHeader><span class="mb-3 flex size-10 items-center justify-center rounded-lg bg-secondary"><ng-icon name="lucideLockKeyhole" size="20" aria-hidden="true"/></span><h1 hlmCardTitle class="text-2xl">Administrator sign-in</h1><p hlmCardDescription>Enter your admin email to receive a secure sign-in link.</p></div>
    <div hlmCardContent><form #loginForm="ngForm" class="space-y-5" (ngSubmit)="loginForm.valid && login()"><hlm-field><label hlmFieldLabel for="admin-email">Email address</label><input hlmInput id="admin-email" type="email" name="email" [(ngModel)]="email" required email autocomplete="email" enterkeyhint="send" [disabled]="busy()" placeholder="name@company.com"></hlm-field><button hlmBtn class="w-full" type="submit" [disabled]="busy()||loginForm.invalid||resendSeconds()>0">{{busy() ? 'Sending…' : resendSeconds()>0 ? 'Try again in '+resendSeconds()+'s' : linkSent() ? 'Send another link' : 'Send sign-in link'}}</button></form>
     @if(loginNotice()){<div hlmAlert variant="destructive" class="mt-4"><h2 hlmAlertTitle>Unable to send link</h2><p hlmAlertDescription>{{loginNotice()}}</p></div>}
@@ -46,7 +46,7 @@
    @if(tab==='campaigns'){<section class="space-y-6">
     @if(bookingCampaign){<admin-bookings [campaign]="bookingCampaign" (back)="bookingCampaign=null" (saved)="notify($event);load()"/>}
     @else if(editing){
-     <section hlmCard>
+     <section hlmCard class="campaign-editor">
       <form #campaignForm="ngForm" (ngSubmit)="campaignForm.valid && confirmSave(publishOnSave ? 'published' : 'draft')">
        <fieldset [disabled]="busy()">
         <div hlmCardContent class="space-y-8">
@@ -61,7 +61,7 @@
          }@else{<div hlmEmpty class="border"><div hlmEmptyHeader><h3 hlmEmptyTitle>No dates added</h3><p hlmEmptyDescription>Add at least one massage date to accept bookings.</p></div></div>}
          <p class="text-xs text-muted-foreground">Date changes apply when you save the campaign. Dates with bookings cannot be edited or removed.</p>
          <hlm-separator/>
-         <hlm-field><span class="text-sm font-medium">Campaign visibility</span><div class="flex items-center gap-3"><hlm-switch aria-label="Accept bookings" inputId="campaign-accept-bookings" [checked]="publishOnSave" (checkedChange)="publishOnSave=$event" [disabled]="busy()" aria-describedby="visibility-description"/><label hlmLabel for="campaign-accept-bookings">Accept bookings</label><span hlmBadge variant="secondary">{{publishOnSave ? 'On' : 'Off'}}</span></div><p hlmFieldDescription id="visibility-description" aria-live="polite">{{publishOnSave ? 'Employees can see and book this campaign after you save.' : 'Only admins can see this campaign. Employees can’t view or book it.'}}</p></hlm-field>
+         <hlm-field class="visibility-setting"><span class="text-sm font-medium">Campaign visibility</span><div class="flex items-center gap-3"><hlm-switch aria-label="Accept bookings" inputId="campaign-accept-bookings" [checked]="publishOnSave" (checkedChange)="publishOnSave=$event" [disabled]="busy()" aria-describedby="visibility-description"/><label hlmLabel for="campaign-accept-bookings">Accept bookings</label><span hlmBadge variant="secondary">{{publishOnSave ? 'On' : 'Off'}}</span></div><p hlmFieldDescription id="visibility-description" aria-live="polite">{{publishOnSave ? 'Employees can see and book this campaign after you save.' : 'Only admins can see this campaign. Employees can’t view or book it.'}}</p></hlm-field>
          @if(saveError()){<div hlmAlert variant="destructive"><h3 hlmAlertTitle>Campaign could not be saved</h3><p hlmAlertDescription>{{saveError()}}</p></div>}
         </div>
         <div hlmCardFooter class="justify-end gap-2 border-t pt-4"><button hlmBtn variant="outline" type="button" (click)="editing=false" [disabled]="busy()">Discard changes</button><button hlmBtn type="submit" [disabled]="busy()||campaignForm.invalid">{{busy() ? 'Saving…' : campaignSaveAction}}</button></div>
