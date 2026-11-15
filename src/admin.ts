@@ -22,6 +22,54 @@ export class AdminPortal implements OnDestroy {
   if(this.tab==='admins')return 'Administrators';
   return this.tab==='settings'?'Business units':'Campaigns';
  }
+ get pageHint(){
+  if(this.bookingCampaign||this.tab==='bookings')return 'See who has booked, and edit or cancel a booking.';
+  if(this.editing)return this.editingId?'Change the details, dates and visibility, then save.':'Name it, add its dates, then choose when employees can see it.';
+  if(this.tab==='admins')return 'People who can sign in and manage Pause.';
+  return this.tab==='settings'?'The units employees choose from when they book.':'Everything employees can book, and what is open right now.';
+ }
+ statusOptions=['all','published','draft','closed'];
+ statusChip=(value:string)=>({all:'All',published:'Open',draft:'Unpublished',closed:'Closed'}[value]||value);
+ // ----- Campaign list: what an administrator needs to see without opening anything -----
+ private listDay(value:string|number){return new Intl.DateTimeFormat('en-GB',{timeZone:'Indian/Mauritius',day:'numeric',month:'short',year:'numeric'}).format(new Date(value));}
+ private campaignSlots(id:string){return this.slotRows.filter(s=>s.campaign_id===id);}
+ campaignCapacity(id:string){return this.campaignSlots(id).reduce((n,s)=>n+(s.capacity||0),0);}
+ campaignFill(id:string){const capacity=this.campaignCapacity(id);return capacity?Math.min(100,Math.round(this.campaignBookings(id)/capacity*100)):0;}
+ needsDate(id:string){return this.count(id)===0&&!this.campaignSlots(id).length;}
+ dateSummary(id:string){
+  const days=[...new Set(this.campaignSlots(id).map(s=>this.listDay(s.start_time)))];
+  if(!days.length)return {main:'No dates yet',sub:''};
+  const now=Date.now(),upcoming=this.campaignSlots(id).filter(s=>Date.parse(s.start_time)>now).sort((a,b)=>Date.parse(a.start_time)-Date.parse(b.start_time));
+  if(!upcoming.length){const last=Math.max(...this.campaignSlots(id).map(s=>Date.parse(s.start_time)));return {main:'Ended '+this.listDay(last),sub:days.length+(days.length===1?' date':' dates')};}
+  const later=new Set(upcoming.map(s=>this.listDay(s.start_time))).size-1;
+  return {main:'Next: '+this.listDay(upcoming[0].start_time),sub:later>0?'then '+later+' more '+(later===1?'date':'dates'):''};
+ }
+ /** Open campaigns first, then unpublished, then closed; soonest date first within each. */
+ sortedCampaigns(){
+  const rank:Record<string,number>={published:0,draft:1,closed:2};
+  const next=(id:string)=>{const times=this.campaignSlots(id).map(s=>Date.parse(s.start_time)).filter(t=>t>Date.now());return times.length?Math.min(...times):Infinity;};
+  return [...this.campaigns()].sort((a,b)=>(rank[a.status]??3)-(rank[b.status]??3)||next(a.id)-next(b.id)||String(a.name).localeCompare(String(b.name)));
+ }
+ listSummary(){
+  const open=this.campaigns().filter(c=>c.status==='published'),now=Date.now();
+  const upcoming=open.flatMap(c=>this.campaignSlots(c.id)).filter(s=>Date.parse(s.start_time)>now&&(s.status??'active')==='active');
+  const next=upcoming.length?Math.min(...upcoming.map(s=>Date.parse(s.start_time))):0;
+  return {open:open.length,bookings:this.campaigns().reduce((n,c)=>n+this.campaignBookings(c.id),0),free:upcoming.reduce((n,s)=>n+Math.max(0,(s.capacity||0)-(s.booked_count||0)),0),next:next?this.listDay(next):'None scheduled'};
+ }
+ // ----- Your own profile: each administrator can change only their own name -----
+ @ViewChild('profileDialog') profileDialog?:HlmDialog;profileDraft='';profileExpected:string|null=null;profileBusy=signal(false);profileError=signal('');profileReady=signal(false);
+ async openProfile(){
+  this.accountTrigger?.close();this.profileDraft=this.profileName();this.profileError.set('');this.profileReady.set(false);this.profileExpected=null;this.profileDialog?.open();
+  try{const email=this.profileEmail().trim().toLowerCase(),result=await rpc('admin_directory',{p_search:email,p_page:0});const own=(result?.rows||[]).find((row:any)=>String(row.email||'').toLowerCase()===email);if(!own)throw new Error('Your administrator record could not be found.');this.profileExpected=own.updated_at||null;if(own.full_name)this.profileDraft=own.full_name;this.profileReady.set(true);}
+  catch(e:any){this.profileError.set(e.code==='PGRST202'?'Apply database migration 014 to enable profile editing.':e.message||'Unable to load your profile. Please try again.');}
+ }
+ async saveProfile(){
+  const name=this.profileDraft.trim();if(this.profileBusy()||!this.profileReady()||!name)return;
+  this.profileBusy.set(true);this.profileError.set('');
+  try{await rpc('save_administrator',{p_email:this.profileEmail().trim().toLowerCase(),p_full_name:name,p_expected:this.profileExpected});this.profileName.set(name);this.profileDialog?.close();this.refreshProfile();void this.adminUsers()?.load();this.notify('Profile updated.');}
+  catch(e:any){this.profileError.set(e.message||'Unable to save your name. Please try again.');}
+  finally{this.profileBusy.set(false);}
+ }
  get campaignSaveAction(){
   if(this.publishOnSave&&this.editingStatus!=='published')return 'Save and publish';
   if(!this.publishOnSave&&this.editingStatus==='published')return 'Save and unpublish';
@@ -81,14 +129,14 @@ export class AdminPortal implements OnDestroy {
  pickerDate(value:string){if(value!==this.pickerValue){this.pickerValue=value;const [year,month,day]=(value||'').split('-').map(Number);this.pickerValueDate=value?new Date(year,month-1,day):null;}return this.pickerValueDate;}
  setPickerDate(value:Date|null){this.dateDraft.date=value ? [value.getFullYear(),String(value.getMonth()+1).padStart(2,'0'),String(value.getDate()).padStart(2,'0')].join('-') : '';}
  formatPickerDate=(date:Date)=>new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric'}).format(date);
- validateDate(day:any){if(!day?.date||!day.start||!day.end)return 'Choose a date, start time and end time.';const start=Date.parse(day.date+'T'+day.start+':00+04:00');if(!Number.isFinite(start)||start<=Date.now())return 'The selected start time has already passed. Choose a future date and time (Mauritius time).';if(day.end<=day.start)return 'End time must be later than start time.';if(this.datePreview(day)<1)return 'The session is too short for one massage. Extend the end time or reduce the massage duration.';if(this.datePreview(day)>240)return 'This session creates more than 240 time slots. Shorten the session or increase the massage duration.';return '';}
+ validateDate(day:any){if(!day?.date||!day.start||!day.end)return 'Choose a date, start time and end time.';const start=Date.parse(day.date+'T'+day.start+':00+04:00');if(!Number.isFinite(start)||start<=Date.now())return 'The selected start time has already passed. Choose a future date and time (Mauritius time).';if(day.end<=day.start)return 'End time must be later than start time.';if(this.datePreview(day)<1)return 'The session is too short for one booking. Extend the end time or reduce the duration of each booking.';if(this.datePreview(day)>240)return 'This session creates more than 240 time slots. Shorten the session or increase the duration of each booking.';return '';}
  validateCampaignDates(){for(const day of this.dates){const error=this.validateDate(day);if(error){this.saveError.set(this.readableDate(day.date)+': '+error);this.showError(error);return false;}}this.saveError.set('');return true;}
  async checkAccess(){try{const {data,error}=await supabase.auth.getSession();if(error)throw error;if(!data.session){this.admin.set(false);return;}if(!await rpc('is_admin')){this.admin.set(false);await supabase.auth.signOut();this.showError('This email address is not authorized for the admin portal. Contact your administrator.');return;}if(!this.admin()){this.admin.set(true);void this.loadProfile(data.session.user);this.ready.set(true);history.replaceState(null,'',adminPath);await this.load();this.stops.push(watch('campaigns',()=>this.queueCampaignLoad()));}}catch{this.showError('Unable to verify access. Please try again.');}finally{this.ready.set(true);}}
  queueCampaignLoad(){clearTimeout(this.campaignRefresh);this.campaignRefresh=setTimeout(()=>void this.load(),200);}
  retryCampaigns(){this.campaignLoading.set(true);void this.load();}
  campaignFilterChanged(){this.campaignLoading.set(true);this.campaignPage=0;this.queueCampaignLoad();}
  campaignPageChange(delta:number){this.campaignLoading.set(true);this.campaignPage=Math.max(0,this.campaignPage+delta);void this.load();}
- async load(){const sequence=++this.campaignLoadId;this.campaignError.set('');try{let query=supabase.from('campaigns').select('*',{count:'exact'}).order('created_at',{ascending:false}).order('id');if(this.statusFilter!=='all')query=query.eq('status',this.statusFilter);if(this.search.trim())query=query.ilike('name','%'+this.search.trim()+'%');const c=await query.range(this.campaignPage*10,this.campaignPage*10+9);if(c.error)throw c.error;const ids=(c.data||[]).map(x=>x.id);const [sessions,slots,units]=await Promise.all([ids.length?readAll((a,b)=>supabase.from('sessions').select('*').in('campaign_id',ids).order('id').range(a,b)):Promise.resolve([]),ids.length?readAll((a,b)=>supabase.from('slots').select('*').in('campaign_id',ids).order('start_time').order('id').range(a,b)):Promise.resolve([]),readAll((a,b)=>supabase.from('sbus').select('name').order('name').range(a,b))]);if(sequence!==this.campaignLoadId)return;this.slotRows=slots;this.campaigns.set(c.data||[]);this.campaignTotal.set(c.count||0);this.sessions.set(sessions.map(x=>({...x,campaignId:x.campaign_id})));this.sbus=units.map(x=>x.name).join(', ');this.dataStops.forEach(stop=>stop());this.dataStops=ids.flatMap(id=>['slots','sessions'].map(table=>watch(table,()=>this.queueCampaignLoad(),'campaign_id=eq.'+id)));try{const info=await rpc('campaign_save_info_page',{p_ids:ids});if(sequence===this.campaignLoadId)this.saveInfo.set(Object.fromEntries((info||[]).filter((x:any)=>ids.includes(x.campaign_id)).map((x:any)=>[x.campaign_id,x])));}catch{this.saveInfo.set({});}if(this.campaignPage>0&&!c.data?.length){this.campaignPage--;void this.load();}}catch{if(sequence===this.campaignLoadId){this.campaignError.set('Please check your connection and try again.');this.showError('Unable to load management data. Please try again.');}}finally{if(sequence===this.campaignLoadId)this.campaignLoading.set(false);}}
+ async load(){const sequence=++this.campaignLoadId;this.campaignError.set('');try{let query=supabase.from('campaigns').select('*',{count:'exact'}).order('created_at',{ascending:false}).order('id');if(this.statusFilter!=='all')query=query.eq('status',this.statusFilter);if(this.search.trim())query=query.ilike('name','%'+this.search.trim()+'%');const c=await query.range(this.campaignPage*10,this.campaignPage*10+9);if(c.error)throw c.error;const ids=(c.data||[]).map(x=>x.id);const [sessions,slots,units]=await Promise.all([ids.length?readAll((a,b)=>supabase.from('sessions').select('*').in('campaign_id',ids).order('id').range(a,b)):Promise.resolve([]),ids.length?readAll((a,b)=>supabase.from('slots').select('*').in('campaign_id',ids).order('start_time').order('id').range(a,b)):Promise.resolve([]),readAll((a,b)=>supabase.from('sbus').select('name').order('name').range(a,b))]);if(sequence!==this.campaignLoadId)return;this.slotRows=slots;this.campaigns.set(c.data||[]);this.campaignTotal.set(c.count||0);this.sessions.set(sessions.map(x=>({...x,campaignId:x.campaign_id})));{const fresh=units.map(x=>x.name).join(', ');if(this.sbus===this.savedSbus)this.sbus=fresh;this.savedSbus=fresh;}this.dataStops.forEach(stop=>stop());this.dataStops=ids.flatMap(id=>['slots','sessions'].map(table=>watch(table,()=>this.queueCampaignLoad(),'campaign_id=eq.'+id)));try{const info=await rpc('campaign_save_info_page',{p_ids:ids});if(sequence===this.campaignLoadId)this.saveInfo.set(Object.fromEntries((info||[]).filter((x:any)=>ids.includes(x.campaign_id)).map((x:any)=>[x.campaign_id,x])));}catch{this.saveInfo.set({});}if(this.campaignPage>0&&!c.data?.length){this.campaignPage--;void this.load();}}catch{if(sequence===this.campaignLoadId){this.campaignError.set('Please check your connection and try again.');this.showError('Unable to load management data. Please try again.');}}finally{if(sequence===this.campaignLoadId)this.campaignLoading.set(false);}}
  ngOnDestroy(){sonner.dismiss('admin-notification');clearTimeout(this.campaignRefresh);this.dataStops.forEach(stop=>stop());clearInterval(this.resendTimer);this.stops.forEach(s=>s());}
  async login(){if(this.busy()||!configured||this.resendSeconds()>0)return;this.loginNotice.set('');this.busy.set(true);this.notify('');try{const {error}=await supabase.functions.invoke('request-admin-sign-in',{body:{email:this.email.trim(),redirectTo:adminSignInUrl}});if(error)throw error;this.linkSent.set(true);this.startResendCooldown();this.notify('If this email has admin access, you’ll receive a sign-in link.');}catch(e:any){const limited=e.status===429||e.code==='over_email_send_rate_limit'||e.code==='over_request_rate_limit';const text=limited?'Sign-in email limit reached. Wait for the limit to reset, or ask your project administrator to configure custom SMTP. Your admin permission is separate from this email limit.':'Unable to request a sign-in link. Please try again.';if(limited)this.startResendCooldown();this.loginNotice.set(text);this.showError(text);}finally{this.busy.set(false);}}
  startResendCooldown(){clearInterval(this.resendTimer);this.resendSeconds.set(60);this.resendTimer=setInterval(()=>{this.resendSeconds.update(n=>Math.max(0,n-1));if(this.resendSeconds()===0)clearInterval(this.resendTimer);},1000);}
@@ -97,7 +145,7 @@ export class AdminPortal implements OnDestroy {
  async call(data:any){if(this.busy())return false;this.busy.set(true);this.notify('');try{await rpc('manage_campaign',{d:data});await this.load();this.notify('Changes saved.');return true;}catch(e:any){this.showError(e.message||'Unable to save changes.');return false;}finally{this.busy.set(false);}}
  async deleteCampaign(){if(this.busy()||!this.deleteTarget)return;this.busy.set(true);try{await rpc('delete_campaign',{p_campaign_id:this.deleteTarget.id});this.deleteTarget=null;await this.load();this.notify('Campaign deleted.');}catch(e:any){this.deleteTarget=null;this.showError(e.message||'Unable to delete campaign.');}finally{this.busy.set(false);}}
  historyTime(t:string){return new Intl.DateTimeFormat('en-GB',{timeZone:'Indian/Mauritius',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(t));}
- historyAction(event:any){const labels:Record<string,string>={'campaign.save':'Campaign saved','campaign.create':'Campaign created','session.create':'Massage date added','session.remove_or_replace':'Massage date removed or replaced','booking.update':'Booking edited','booking.cancel':'Booking cancelled','campaign.delete':'Campaign deleted'};return event.action==='campaign.status' ? (event.details?.status==='published'?'Bookings opened':event.details?.status==='closed'?'Bookings closed':'Campaign unpublished') : labels[event.action]||'Campaign updated';}
+ historyAction(event:any){const labels:Record<string,string>={'campaign.save':'Campaign saved','campaign.create':'Campaign created','session.create':'Date added','session.remove_or_replace':'Date removed or replaced','booking.update':'Booking edited','booking.cancel':'Booking cancelled','campaign.delete':'Campaign deleted'};return event.action==='campaign.status' ? (event.details?.status==='published'?'Bookings opened':event.details?.status==='closed'?'Bookings closed':'Campaign unpublished') : labels[event.action]||'Campaign updated';}
  historyDay(t:string){return new Intl.DateTimeFormat('en-GB',{timeZone:'Indian/Mauritius',day:'numeric',month:'long',year:'numeric'}).format(new Date(t));}
  historyClock(t:string){return new Intl.DateTimeFormat('en-GB',{timeZone:'Indian/Mauritius',hour:'2-digit',minute:'2-digit'}).format(new Date(t));}
  historyGroups(){const groups:{day:string;events:any[]}[]=[];for(const event of this.historyEvents()){const day=this.historyDay(event.occurred_at);let group=groups[groups.length-1];if(!group||group.day!==day){group={day,events:[]};groups.push(group);}group.events.push(event);}return groups;}
@@ -119,14 +167,49 @@ export class AdminPortal implements OnDestroy {
  async cancelDateRemoval(){await this.removeDateDialog?.close();this.pendingDateRemoval='';}
  removeScheduled(id:string){if(this.slotRows.some(s=>s.session_id===id && s.booked_count>0)){this.showError('This date has bookings and cannot be deleted.');return;}if(!this.removedSessions.includes(id))this.removedSessions.push(id);this.notify('Date removed from your changes. Click Save campaign to confirm.');}
  removeDate(i:number){const d=this.dates[i];if(d.sessionId){this.dates.splice(i,1);this.notify('Edit cancelled. The original date is unchanged.');}else{this.dates.splice(i,1);this.notify('New date discarded.');}}
+ /** Every date of the campaign being edited, saved and unsaved together, in calendar order. */
+ dateCards(){
+  const part=(value:number,options:Intl.DateTimeFormatOptions)=>new Intl.DateTimeFormat('en-GB',{timeZone:'Indian/Mauritius',...options}).format(new Date(value));
+  const face=(t:number)=>({weekday:part(t,{weekday:'short'}),dayNum:part(t,{day:'numeric'}),month:part(t,{month:'short',year:'numeric'})});
+  const clock=(t:number)=>part(t,{hour:'2-digit',minute:'2-digit'});
+  const saved=this.sessions().filter(s=>s.campaignId===this.editingId&&!this.removedSessions.includes(s.id)&&!this.dates.some(d=>d.sessionId===s.id)).map(s=>{
+   const slots=this.slotRows.filter(x=>x.session_id===s.id).sort((a,b)=>a.start_time.localeCompare(b.start_time));
+   if(!slots.length)return {key:'s'+s.id,kind:'saved',id:s.id,index:-1,draft:null as any,t:Number.MAX_SAFE_INTEGER,weekday:'',dayNum:'–',month:'',range:'No time slots',slots:0,places:0,booked:0,locked:false,label:'Session configured'};
+   const start=Date.parse(slots[0].start_time),end=Date.parse(slots[slots.length-1].end_time||slots[slots.length-1].start_time),booked=slots.reduce((n,x)=>n+(x.booked_count||0),0);
+   return {key:'s'+s.id,kind:'saved',id:s.id,index:-1,draft:null as any,t:start,...face(start),range:clock(start)+' to '+clock(end),slots:slots.length,places:slots.reduce((n,x)=>n+(x.capacity||0),0),booked,locked:booked>0,label:part(start,{day:'numeric',month:'short',year:'numeric'})};
+  });
+  const drafts=this.dates.map((day,index)=>{const t=Date.parse(day.date+'T'+(day.start||'00:00')+':00+04:00')||Number.MAX_SAFE_INTEGER-1,count=this.datePreview(day);return {key:'d'+index,kind:day.sessionId?'edited':'new',id:day.sessionId||'',index,draft:day,t,...(Number.isFinite(t)&&t<Number.MAX_SAFE_INTEGER-1?face(t):{weekday:'',dayNum:'–',month:''}),range:day.start+' to '+day.end,slots:count,places:count*Number(day.capacity||0),booked:0,locked:false,label:day.date?this.readableDate(day.date):'New date'};});
+  return [...saved,...drafts].sort((a,b)=>a.t-b.t);
+ }
+ previewRange(){const days=this.dateCards().filter(d=>d.t>Date.now()&&d.t<Number.MAX_SAFE_INTEGER-1);if(!days.length)return 'No upcoming dates yet';return days.length===1?days[0].label:days[0].label+' – '+days[days.length-1].label;}
  existingDates(){return this.sessions().filter(s=>s.campaignId===this.editingId && !this.removedSessions.includes(s.id) && !this.dates.some(d=>d.sessionId===s.id)).map(s=>{const slots=this.slotRows.filter(x=>x.session_id===s.id);return {id:s.id,label:slots.length ? new Intl.DateTimeFormat('en-GB',{timeZone:'Indian/Mauritius',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(slots[0].start_time))+' · '+slots.length+' slots' : 'Session configured'};});}
  confirmSave(status:string){if(this.busy()||!this.validateCampaignDates())return;this.pendingSaveStatus=status;}
  async acceptSave(){const status=this.pendingSaveStatus;if(status===null)return;this.pendingSaveStatus=null;await this.saveEditor(status);}
- async saveEditor(status:string){if(this.busy())return;if(!this.validateCampaignDates())return;const wasPublished=this.editingStatus==='published';this.busy.set(true);try{const payload={id:this.editingId,name:this.name,description:this.description,status,dates:this.dates,removedSessions:this.removedSessions};const serialized=JSON.stringify(payload);if(serialized!==this.savePayload){this.savePayload=serialized;this.saveRequestId=crypto.randomUUID();}await rpc('save_campaign_v2',{d:{...payload,requestId:this.saveRequestId}});this.recentCampaign=this.editingId;this.editing=false;await this.load();this.notify(status==='published'&&!wasPublished?'Campaign published. Bookings are open.':status==='draft'&&wasPublished?'Campaign unpublished.':'Campaign saved.');}catch(e:any){const error=e.code==='PGRST202'?'Database update required: apply migration 005 before saving scheduled dates.':e.message==='Choose a future session with 1–240 slots.'?'A massage date is invalid. Check that its start time is in the future, its end time is later, and it creates 1–240 slots.':e.message||'Unable to save campaign. Please try again.';this.saveError.set(error);this.showError(error);}finally{this.busy.set(false);}}
+ async saveEditor(status:string){if(this.busy())return;if(!this.validateCampaignDates())return;const wasPublished=this.editingStatus==='published';this.busy.set(true);try{const payload={id:this.editingId,name:this.name,description:this.description,status,dates:this.dates,removedSessions:this.removedSessions};const serialized=JSON.stringify(payload);if(serialized!==this.savePayload){this.savePayload=serialized;this.saveRequestId=crypto.randomUUID();}await rpc('save_campaign_v2',{d:{...payload,requestId:this.saveRequestId}});this.recentCampaign=this.editingId;this.editing=false;await this.load();this.notify(status==='published'&&!wasPublished?'Campaign published. Bookings are open.':status==='draft'&&wasPublished?'Campaign unpublished.':'Campaign saved.');}catch(e:any){const error=e.code==='PGRST202'?'Database update required: apply migration 005 before saving scheduled dates.':e.message==='Choose a future session with 1–240 slots.'?'A date is invalid. Check that its start time is in the future, its end time is later, and it creates 1–240 slots.':e.message||'Unable to save campaign. Please try again.';this.saveError.set(error);this.showError(error);}finally{this.busy.set(false);}}
  async change(){if(this.busy()||!this.statusTarget)return;const target=this.statusTarget;this.busy.set(true);this.statusError.set('');try{await rpc('set_campaign_status',{p_campaign_id:target.id,p_status:target.status});this.campaignStatusDialog?.close();this.recentCampaign=target.id;await this.load();this.notify(target.status==='published'?'Campaign published. Bookings are open.':'Bookings closed.');}catch(e:any){this.statusError.set(e.code==='PGRST202'?'Apply database migration 006 to enable publishing.':e.message||'Unable to update campaign. Please try again.');}finally{this.busy.set(false);}}
 
  addSession(){return this.call({action:'session',campaignId:this.selected,date:this.date,start:this.start,end:this.end,duration:this.duration,breakDuration:this.pause,capacity:this.capacity});}
- async saveSbus(){if(this.busy())return;this.busy.set(true);try{await rpc('save_sbus',{p_names:this.sbus});await this.load();this.notify('Business units saved.');}catch(e:any){this.showError(e.code==='PGRST202'?'Apply database migration 011 to enable saving business units.':e.message||'Unable to save business units.');}finally{this.busy.set(false);}}
+ // ----- Business units: edited as a list, stored as the comma-separated text the database expects -----
+ savedSbus='';unitDraft='';unitError=signal('');
+ private splitUnits(text:string){return String(text||'').split(/[,\n]/).map(name=>name.trim().replace(/\s+/g,' ')).filter(Boolean);}
+ private sameUnit(a:string,b:string){return a.toLowerCase()===b.toLowerCase();}
+ unitList(){return this.splitUnits(this.sbus);}
+ savedUnits(){return this.splitUnits(this.savedSbus);}
+ sortedUnits(){const other=(name:string)=>name.toLowerCase()==='other';return [...this.unitList()].sort((a,b)=>Number(other(a))-Number(other(b))||a.localeCompare(b,undefined,{sensitivity:'base'}));}
+ isNewUnit(name:string){return !this.savedUnits().some(saved=>this.sameUnit(saved,name));}
+ removedUnits(){return this.savedUnits().filter(saved=>!this.unitList().some(name=>this.sameUnit(saved,name)));}
+ unitsDirty(){const now=this.unitList().map(n=>n.toLowerCase()).sort().join('|'),saved=this.savedUnits().map(n=>n.toLowerCase()).sort().join('|');return now!==saved;}
+ addUnits(){
+  const names=this.splitUnits(this.unitDraft);if(!names.length)return;
+  const list=this.unitList(),skipped:string[]=[];
+  for(const name of names){if(name.length>60){this.unitError.set('Keep each name under 60 characters.');return;}if(list.some(existing=>this.sameUnit(existing,name)))skipped.push(name);else list.push(name);}
+  this.sbus=list.join(', ');this.unitDraft='';
+  this.unitError.set(skipped.length?(skipped.length===1?'“'+skipped[0]+'” is already in the list.':skipped.length+' names were already in the list.'):'');
+ }
+ removeUnit(name:string){this.sbus=this.unitList().filter(existing=>!this.sameUnit(existing,name)).join(', ');this.unitError.set('');}
+ restoreUnit(name:string){this.sbus=[...this.unitList(),name].join(', ');}
+ resetUnits(){this.sbus=this.savedSbus;this.unitDraft='';this.unitError.set('');}
+ async saveSbus(){if(this.busy())return;this.busy.set(true);try{await rpc('save_sbus',{p_names:this.sbus});this.savedSbus=this.sbus;this.unitError.set('');await this.load();this.notify('Business units saved.');}catch(e:any){this.showError(e.code==='PGRST202'?'Apply database migration 011 to enable saving business units.':e.message||'Unable to save business units.');}finally{this.busy.set(false);}}
  count(id:string){return this.sessions().filter(s=>s.campaignId===id).length;}
  preview(){const minutes=(s:string)=>Number(s.split(':')[0])*60+Number(s.split(':')[1]);return Math.max(0,Math.floor((minutes(this.end)-minutes(this.start)+this.pause)/(this.duration+this.pause)))||0;}
 }

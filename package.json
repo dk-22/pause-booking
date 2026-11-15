@@ -5,7 +5,7 @@
     "start": "ng serve",
     "build": "ng build",
     "test:ui": "playwright test",
-    "build:pages": "ng build --configuration production --base-href /booking-massage/ && node scripts/prepare-pages.mjs"
+    "build:pages": "ng build --configuration production --base-href /pause-booking/ && node scripts/prepare-pages.mjs"
   },
   "dependencies": {
     "@angular/cdk": "^21.2.14",

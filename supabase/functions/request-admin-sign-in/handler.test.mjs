@@ -16,7 +16,7 @@ test('eligibility failures fail closed',async()=>{
 
 test('sign-in redirects stay on the allowed origin and approved app path',()=>{
  const origin='https://dk-22.github.io';
- const pages=origin+'/booking-massage/bk-admin-codex/login';
+ const pages=origin+'/pause-booking/bk-admin-codex/login';
  assert.equal(adminSignInRedirect(origin,pages,[pages]),pages);
  assert.equal(adminSignInRedirect(origin,pages,[]),null);
  assert.equal(adminSignInRedirect(origin,'https://other.example/login',['https://other.example/login']),null);

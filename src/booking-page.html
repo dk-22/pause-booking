@@ -1,97 +1,262 @@
-<header class="border-b">
- <div class="mx-auto flex max-w-6xl min-h-16 items-center px-4 py-2 sm:px-8">
-  <a hlmBtn variant="ghost" href="./" class="h-auto gap-3 px-2 py-1"><img src="brand/pause-icon.svg" width="36" height="36" alt=""/><span class="flex flex-col items-start gap-0.5"><span class="text-lg font-semibold leading-tight">Pause</span><span class="text-xs font-normal text-muted-foreground">Employee Wellness</span></span></a>
- </div>
-</header>
-<main class="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:space-y-6 sm:px-8">
- <div class="flex flex-wrap items-start justify-between gap-3"><div class="space-y-2"><h1 class="text-2xl font-semibold tracking-tight">Book your massage</h1><p class="text-sm text-muted-foreground">Pick a time to book your workplace massage.</p></div></div>
- @if(error()&&step===1){<div hlmAlert variant="destructive"><h2 hlmAlertTitle>Unable to load sessions</h2><p hlmAlertDescription>{{error()}}</p><button hlmBtn variant="outline" (click)="retryLoad()">Try again</button></div>}
- @if(!configured){<div hlmAlert><h2 hlmAlertTitle>Setup required</h2><p hlmAlertDescription>Connect your Supabase project to load sessions.</p></div>}
- <section hlmCard class="min-w-0">
-  <div hlmCardContent class="space-y-4 pt-4 sm:space-y-5 sm:pt-6">
-   <div class="flex flex-wrap items-center justify-between gap-2"><h2 class="text-base font-semibold">Choose your session</h2>@if(!loading()&&!selected&&visibleCampaigns().length){<p class="text-xs text-muted-foreground">Select a campaign to see its dates and times.</p>}</div>
-   @if(loading()){
-    <div role="status" aria-label="Loading campaigns and available times" aria-busy="true" class="space-y-4 sm:space-y-5">
-     <div class="grid gap-4 sm:gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"><div class="min-w-0 space-y-3"><h3 class="text-sm font-semibold">Campaign</h3><div class="flex gap-2 overflow-hidden" aria-hidden="true">@for(i of [1,2];track i){<div hlmSkeleton class="h-10 w-36 shrink-0"></div>}</div><div hlmSkeleton class="h-4 w-48"></div></div><div class="min-w-0 space-y-3"><h3 class="text-sm font-semibold">Date</h3><div class="flex gap-2 overflow-hidden" aria-hidden="true">@for(i of [1,2];track i){<div hlmSkeleton class="h-10 w-32 shrink-0"></div>}</div><div hlmSkeleton class="h-4 w-40"></div></div></div><hlm-separator/>
-     <h3 class="text-base font-semibold">Available times</h3><div hlmSkeleton class="h-4 w-48"></div>
-     <div hlmTableContainer><table hlmTable class="text-xs sm:text-sm [&_td]:px-1 sm:[&_td]:px-2 [&_th]:px-1 sm:[&_th]:px-2"><thead hlmTHead><tr hlmTr><th hlmTh>Time</th><th hlmTh>Availability</th><th hlmTh class="hidden sm:table-cell">Attendees</th><th hlmTh><span class="sr-only">Select time</span></th></tr></thead><tbody hlmTBody aria-hidden="true">@for(i of [1,2,3,4];track i){<tr hlmTr><td hlmTd><div hlmSkeleton class="my-2 h-4 w-28"></div></td><td hlmTd><div hlmSkeleton class="h-5 w-24"></div></td><td hlmTd class="hidden sm:table-cell"><div hlmSkeleton class="h-4 w-28"></div></td><td hlmTd><div hlmSkeleton class="ml-auto h-11 w-16 sm:h-8"></div></td></tr>}</tbody></table></div>
-    </div>
-   }@else if(!visibleCampaigns().length&&!error()){
-    <div hlmEmpty><div hlmEmptyHeader><h2 hlmEmptyTitle>No sessions scheduled yet</h2><p hlmEmptyDescription>Check back soon for the next wellness campaign.</p></div></div>
-   }@else if(visibleCampaigns().length){
-    <div class="grid min-w-0 gap-4 sm:gap-5 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-     <div class="min-w-0 space-y-3"><h3 class="text-sm font-semibold">Campaign</h3>
-      <div hlmTabs [tab]="selected?.id||''" (tabActivated)="chooseCampaignId($event)" class="min-w-0">
-       <hlm-paginated-tabs-list aria-label="Available campaigns" class="w-full min-w-0">@for(c of visibleCampaigns();track c.id){<button [hlmTabsTrigger]="c.id" class="data-active:bg-black data-active:text-white data-active:hover:bg-black data-active:hover:text-white">{{c.name}}</button>}</hlm-paginated-tabs-list>
-       @for(c of visibleCampaigns();track c.id){<div [hlmTabsContent]="c.id">@if(selected?.id===c.id){<p class="text-xs text-muted-foreground">@if(c.description){<span>{{c.description}} · </span>}{{campaignRange(c.id)}}</p>}</div>}
-      </div>
-     </div>
-     <div class="min-w-0 space-y-3"><h3 class="text-sm font-semibold">Date</h3>
-      <div hlmTabs [tab]="selectedDay" (tabActivated)="selectDay($event)" class="min-w-0">
-       <hlm-paginated-tabs-list aria-label="Massage dates" class="w-full min-w-0">@for(day of days();track day){<button [hlmTabsTrigger]="day" data-date-choice class="group/date gap-2 data-active:bg-black data-active:text-white data-active:hover:bg-black data-active:hover:text-white"><span aria-hidden="true" class="flex size-3.5 shrink-0 items-center justify-center rounded-full border border-current"><span class="size-1.5 rounded-full" [class.bg-white]="selectedDay===day"></span></span>{{dayLabel(day)}}</button>}</hlm-paginated-tabs-list>
-       @for(day of days();track day){<div [hlmTabsContent]="day"><p class="text-xs text-muted-foreground">{{days().length}} {{days().length===1?'date':'dates'}} available · {{dayPlaces(day)}} {{dayPlaces(day)===1?'place':'places'}} left on this date</p></div>}
-      </div>
-     </div>
-    </div><hlm-separator/>
-      <div class="flex flex-wrap items-start justify-between gap-3"><div><h3 #availabilityHeading tabindex="-1" class="font-semibold outline-none">Available times</h3>@if(selectedDay){<p class="mt-1 text-sm text-muted-foreground">{{durationLabel()}} · {{dayLabel(selectedDay)}}</p>}</div>@if(selectedDay){<div class="flex items-center gap-2"><hlm-checkbox inputId="available-only" [(ngModel)]="availableOnly"/><label hlmLabel for="available-only">Available only</label></div>}</div>
-    @if(!selected||!selectedDay){<div hlmEmpty class="min-h-64"><div hlmEmptyHeader><div hlmEmptyMedia variant="icon"><ng-icon name="lucideCalendarDays" aria-hidden="true"/></div><h3 hlmEmptyTitle>{{!selected?'Choose a campaign to get started':'Choose a date to see available times'}}</h3><p hlmEmptyDescription>{{!selected?'Available dates and times will appear here.':'Choose a date above to see available times.'}}</p></div></div>}
-    @else if(shownSlots().length){<div hlmTableContainer><table hlmTable class="text-xs sm:text-sm [&_td]:px-1 sm:[&_td]:px-2 [&_th]:px-1 sm:[&_th]:px-2"><thead hlmTHead><tr hlmTr><th hlmTh>Time</th><th hlmTh>Availability</th><th hlmTh class="hidden sm:table-cell">Attendees</th><th hlmTh class="text-right"><span class="sr-only">Select time</span></th></tr></thead><tbody hlmTBody>@for(s of shownSlots();track s.id){<tr hlmTr><td hlmTd><p class="font-medium tabular-nums">{{time(s.startTime)}} – {{time(s.endTime)}}</p><div class="sm:hidden">@if(s.names.length){<hlm-popover><button hlmBtn type="button" variant="link" size="xs" class="min-h-11 px-0 text-xs" hlmPopoverTrigger [attr.aria-label]="'Who’s attending ('+s.names.length+'): '+s.names.join(', ')">Who’s attending ({{s.names.length}})</button><div hlmPopoverContent *hlmPopoverPortal class="w-64 max-w-[calc(100vw-2rem)]"><p hlmPopoverTitle class="mb-2 text-sm font-medium">Attendees</p><ul class="space-y-1 text-sm text-muted-foreground">@for(name of s.names;track $index){<li class="flex items-start gap-2"><ng-icon name="lucideUserRound" size="16" class="mt-0.5 shrink-0" aria-hidden="true"/><span class="min-w-0 break-words">{{name}}</span></li>}</ul></div></hlm-popover>}</div></td><td hlmTd><span hlmBadge [variant]="s.status==='active'&&s.bookedCount>=s.capacity?'destructive':available(s)?'secondary':'outline'">@if(s.status==='active'&&s.bookedCount>=s.capacity){<ng-icon name="lucideLockKeyhole" size="12" aria-hidden="true"/>}{{s.status!=='active'?'Unavailable':s.bookedCount>=s.capacity?'Fully booked':(s.capacity-s.bookedCount)+((s.capacity-s.bookedCount)===1?' place left':' places left')}}</span></td><td hlmTd class="hidden sm:table-cell">@if(s.names.length){<hlm-hover-card><button hlmBtn type="button" variant="link" size="xs" class="px-0 text-xs" hlmHoverCardTrigger [showDelay]="200" [hideDelay]="150" [attr.aria-label]="'Who’s attending ('+s.names.length+'): '+s.names.join(', ')">Who’s attending ({{s.names.length}})</button><div hlmHoverCardContent *hlmHoverCardPortal class="w-64 max-w-[calc(100vw-2rem)]"><p class="mb-2 text-sm font-medium">Attendees</p><ul class="space-y-1 text-sm text-muted-foreground">@for(name of s.names;track $index){<li class="flex items-start gap-2"><ng-icon name="lucideUserRound" size="16" class="mt-0.5 shrink-0" aria-hidden="true"/><span class="min-w-0 break-words">{{name}}</span></li>}</ul></div></hlm-hover-card>}@else{<span class="text-muted-foreground">—</span>}</td><td hlmTd class="text-right"><button hlmBtn size="sm" class="h-11 w-16 justify-center sm:h-8 disabled:pointer-events-auto disabled:cursor-not-allowed" [disabled]="!available(s)" [attr.aria-label]="'Select time '+time(s.startTime)+' – '+time(s.endTime)" (click)="pick(s);openBooking()">{{available(s)?'Book':s.bookedCount>=s.capacity?'Full':'Closed'}}</button></td></tr>}</tbody></table></div>}
-    @else{<div hlmEmpty><div hlmEmptyHeader><h3 hlmEmptyTitle>{{allTimesBooked()?'All times are booked for this date':'No times available'}}</h3><p hlmEmptyDescription>{{availableOnly?'Choose another date or show all times.':'Choose another date to see its times.'}}</p></div>@if(availableOnly){<div hlmEmptyContent><button hlmBtn variant="outline" (click)="availableOnly=false">Show all times</button></div>}</div>}
+<div class="pz-page">
+ <main class="pz-main">
+  <section class="pz-panel" aria-labelledby="page-title">
+   <div class="pz-ripples" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+   <header class="pz-top">
+    <a class="pz-brand" href="./" aria-label="Pause home"><svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#F6F3EA"/><rect x="21" y="19" width="8" height="26" rx="4" fill="#1F3D32"/><rect x="35" y="19" width="8" height="26" rx="4" fill="#1F3D32"/></svg><span class="pz-brand-text"><span>Pause</span><span class="pz-brand-sub">Employee wellness</span></span></a>
+    <a class="pz-admin pz-admin-on-panel" [href]="adminPath" target="_blank" rel="noopener">Admin panel<ng-icon name="lucideExternalLink" size="15" aria-hidden="true"/><span class="sr-only"> (opens in a new tab)</span></a>
+   </header>
+   <div class="pz-intro">
+   <div class="grid gap-4">
+    <h1 id="page-title" class="pz-title">Press pause.</h1>
+    <p class="pz-lede">Choose a day and a time that suits you.</p>
+   </div>
 
+   @if(!configured){<div hlmAlert><h2 hlmAlertTitle>Setup required</h2><p hlmAlertDescription>Connect your Supabase project to load sessions.</p></div>}
+   @if(error()&&step===1){<div hlmAlert variant="destructive"><h2 hlmAlertTitle>Sessions could not be loaded</h2><p hlmAlertDescription>{{error()}}</p><button hlmBtn variant="outline" class="mt-2 h-10 rounded-full px-4" (click)="retryLoad()">Try again</button></div>}
+
+   @if(loading()){
+    <div class="pz-campaign" aria-hidden="true"><div hlmSkeleton class="h-16 w-full rounded-2xl bg-white/10"></div><div hlmSkeleton class="h-16 w-full rounded-2xl bg-white/10"></div></div>
+   }@else if(visibleCampaigns().length>1){
+    <div class="pz-campaign">
+     <h2 class="pz-label" id="campaign-label">Campaign</h2>
+     <div hlmTabs orientation="vertical" [tab]="selected?.id||''" (tabActivated)="chooseCampaignId($event)" class="min-w-0 flex-col gap-3">
+      <hlm-tabs-list aria-labelledby="campaign-label" class="flex w-full items-stretch gap-2 bg-transparent p-0">
+       @for(c of visibleCampaigns();track c.id){
+        <button [hlmTabsTrigger]="c.id" data-campaign-choice class="pz-choice h-auto min-h-14 w-full flex-none flex-col items-start gap-0.5 rounded-2xl border border-white/15 py-3.5 pr-12 pl-5 text-left text-base whitespace-normal text-[#F6F3EA] after:hidden hover:bg-white/5 hover:text-[#F6F3EA] focus-visible:ring-[#F6F3EA]/50 focus-visible:border-[#F6F3EA]/60 data-active:border-transparent data-active:bg-[#F6F3EA] data-active:text-foreground">
+         <span class="font-semibold">{{c.name}}</span>
+         <span class="text-sm font-normal opacity-70">{{campaignRange(c.id)}}</span>
+         <span class="pz-radio" aria-hidden="true"></span>
+        </button>
+       }
+      </hlm-tabs-list>
+      @for(c of visibleCampaigns();track c.id){<div [hlmTabsContent]="c.id">@if(selected?.id===c.id&&c.description){<p class="pz-campaign-intro">{{c.description}}</p>}</div>}
+     </div>
+    </div>
+   }@else if(selected){
+    <div class="pz-campaign">
+     <h2 class="pz-campaign-name">{{selected.name}}</h2>
+     <p class="pz-campaign-meta">{{campaignRange(selected.id)}}</p>
+     @if(selected.description){<p class="pz-campaign-intro">{{selected.description}}</p>}
+    </div>
    }
-  </div>
- </section>
-</main>
-<hlm-dialog #bookingDialog [disableClose]="busy" (closed)="resetBooking()">
- <hlm-dialog-content *hlmDialogPortal class="max-h-[90dvh] overflow-y-auto sm:max-w-lg" [showCloseButton]="!busy">
-  <hlm-dialog-header>
-   @if(step===3){
-    <div class="flex items-start gap-3">
-     <span hlmBadge variant="secondary" class="size-9 shrink-0 justify-center rounded-full p-0 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-75 duration-300" data-booking-success aria-hidden="true"><ng-icon name="lucideCheck" size="22" strokeWidth="2.5" style="color: #059669"/></span>
-     <div class="min-w-0 space-y-1 text-left">
-      <h2 hlmDialogTitle>Booking confirmed</h2>
-      <div hlmDialogDescription>
-       @if(calendarEvent; as appointment){
-        <p>{{appointmentDate(appointment.start)}}</p>
-        <p class="flex flex-wrap gap-x-1"><span class="whitespace-nowrap font-medium tabular-nums text-foreground">{{time(appointment.start)}} – {{time(appointment.end)}}</span> <span class="whitespace-nowrap">· Mauritius time</span></p>
+
+   </div>
+   <ul class="pz-notes">
+    <li>One booking per person in each campaign.</li>
+    <li>To change or cancel a booking, contact your administrator.</li>
+   </ul>
+  </section>
+
+  <div class="pz-stage">
+   <div class="pz-stage-top">
+    <a class="pz-admin" [href]="adminPath" target="_blank" rel="noopener">Admin panel<ng-icon name="lucideExternalLink" size="15" aria-hidden="true"/><span class="sr-only"> (opens in a new tab)</span></a>
+   </div>
+  <section class="pz-book" aria-label="Days and times">
+   @if(loading()){
+    <div role="status" aria-label="Loading days and times" aria-busy="true" class="grid gap-5">
+     <div class="flex gap-2 overflow-hidden p-1" aria-hidden="true">@for(i of [1,2,3,4];track i){<div hlmSkeleton class="h-24 w-[4.5rem] shrink-0 rounded-[1.125rem]"></div>}</div>
+     <div class="pz-sheet" aria-hidden="true">
+      <div class="pz-sheet-head"><div class="grid gap-2"><div hlmSkeleton class="h-7 w-56"></div><div hlmSkeleton class="h-4 w-40"></div></div></div>
+      <ul class="pz-times">@for(i of [1,2,3,4];track i){<li class="pz-time"><div class="pz-clock"><div hlmSkeleton class="h-7 w-20"></div></div><div class="pz-detail"><div hlmSkeleton class="h-4 w-36"></div></div><div class="pz-action"><div hlmSkeleton class="h-10 w-20 rounded-full"></div></div></li>}</ul>
+     </div>
+    </div>
+   }@else if(!visibleCampaigns().length){
+    @if(!error()){
+     <div class="pz-sheet"><div class="pz-empty border-t-0">
+      <h2 class="pz-empty-title">Nothing scheduled yet</h2>
+      <p class="pz-empty-text">Days appear here as soon as the next campaign opens. Check back soon.</p>
+     </div></div>
+    }
+   }@else{
+    <div class="grid gap-2 min-w-0">
+     <h2 class="pz-label" id="day-label">Day</h2>
+     <div hlmTabs [tab]="selectedDay" (tabActivated)="selectDay($event)" class="min-w-0 gap-1">
+      <hlm-paginated-tabs-list aria-labelledby="day-label" class="-mx-1 min-w-0" tabListClass="group-data-horizontal/tabs:h-auto gap-2 rounded-none bg-transparent px-1 pt-2 pb-5">
+       @for(day of days();track day){
+        <button [hlmTabsTrigger]="day" data-date-choice [attr.aria-label]="longDay(day)+', '+placesLabel(dayPlaces(day)).toLowerCase()" class="pz-tile h-auto w-[4.5rem] flex-none rounded-[1.125rem] border border-border bg-card px-0 pt-3 pb-2 text-foreground after:hidden hover:border-primary/60 data-active:border-primary data-active:bg-primary data-active:text-primary-foreground aria-selected:hover:text-primary-foreground">
+         <span class="pz-day" [attr.data-full]="dayPlaces(day)===0"><span class="pz-day-week">{{dayPart(day,'weekday')}}</span><span class="pz-day-num">{{dayPart(day,'day')}}</span><span class="pz-day-month">{{dayPart(day,'month')}}</span><span class="pz-day-bar" [attr.data-level]="dayFill(day)>=100?'full':dayFill(day)>=75?'high':null"><span [style.width.%]="dayFill(day)"></span></span></span>
+        </button>
+       }
+      </hlm-paginated-tabs-list>
+      @for(day of days();track day){<div [hlmTabsContent]="day" class="hidden"></div>}
+     </div>
+    </div>
+
+    <div class="pz-sheet">
+     <div class="pz-sheet-head">
+      <div class="min-w-0">
+       <h2 #availabilityHeading tabindex="-1" class="pz-sheet-title">{{selectedDay?longDay(selectedDay):'Choose a day'}}</h2>
+       @if(selectedDay){<p class="pz-sheet-sub"><span>{{durationLabel()}}</span><span>{{placesLabel(dayPlaces(selectedDay))}}</span><span class="pz-live"><i aria-hidden="true"></i>Updates live</span></p>}
+      </div>
+      @if(selectedDay){<div class="pz-filter"><hlm-checkbox inputId="available-only" [(ngModel)]="availableOnly"/><label hlmLabel for="available-only" class="font-normal">Hide full times</label></div>}
+     </div>
+
+     @if(!selected||!selectedDay){
+      <div class="pz-empty"><h3 class="pz-empty-title">Choose a day to see its times</h3><p class="pz-empty-text">Pick one of the days above.</p></div>
+     }@else if(dayGroups().length){
+      <div class="pz-groups">
+       @for(group of dayGroups();track group.label){
+        <section class="pz-group" [attr.aria-label]="group.label">
+         <h3 class="pz-group-title"><span>{{group.label}}</span><span class="pz-group-count">{{group.open.length?group.open.length+(group.open.length===1?' free time':' free times'):'Fully booked'}}</span></h3>
+         @if(group.open.length){
+          <ul class="pz-grid">
+           @for(s of group.open;track s.id){
+            <li class="pz-cell" [style.--i]="$index" (mouseenter)="show(s.id,$event)" (mouseleave)="peek=''">
+             <button type="button" class="pz-slot" data-state="open" [attr.data-fresh]="fresh()[s.id]||null" [attr.aria-label]="'Book '+time(s.startTime)+' to '+time(s.endTime)+', '+availabilityLabel(s).toLowerCase()+(s.names.length?'. Attending: '+s.names.join(', '):'')" (click)="tap(s,$event)" (focus)="show(s.id,$event)" (blur)="peek=''">
+              <span class="pz-slot-time">{{time(s.startTime)}}</span>
+              <span class="pz-slot-end">to {{time(s.endTime)}}</span>
+              <span class="pz-slot-state">
+               @if(faces(s).length){<span class="pz-faces" aria-hidden="true">@for(face of faces(s);track $index){<span class="pz-face" [attr.data-free]="!face" [attr.data-new]="(fresh()[s.id]&&$index===s.bookedCount-1)||null">{{face}}</span>}</span>}
+               <span>{{placesLeft(s)}} left</span>
+              </span>
+             </button>
+             @if(peek===s.id&&s.names.length){
+              <div class="pz-pop" [attr.data-side]="peekSide" aria-hidden="true">
+               <p class="pz-pop-title">{{availabilityLabel(s)}}</p>
+               <ul class="pz-people">@for(name of s.names;track $index){<li><span class="pz-face">{{initials(name)}}</span><span>{{name}}</span></li>}</ul>
+              </div>
+             }
+            </li>
+           }
+          </ul>
+         }
+         @if(group.taken.length){
+          <ul class="pz-taken" [attr.aria-label]="'Times already taken, '+group.label.toLowerCase()">
+           @for(s of group.taken;track s.id){
+            <li class="pz-cell" (mouseenter)="show(s.id,$event)" (mouseleave)="peek=''">
+             <button type="button" class="pz-mini" [attr.data-state]="slotState(s)" [attr.data-fresh]="fresh()[s.id]||null" aria-disabled="true" [attr.aria-label]="time(s.startTime)+' to '+time(s.endTime)+', '+availabilityLabel(s).toLowerCase()+(s.names.length?'. Attending: '+s.names.join(', '):'')" (click)="tap(s,$event)" (focus)="show(s.id,$event)" (blur)="peek=''"><span class="pz-mini-time">{{time(s.startTime)}}</span><span>{{slotState(s)==='full'?'Full':'Closed'}}</span></button>
+             @if(peek===s.id){
+              <div class="pz-pop" [attr.data-side]="peekSide" aria-hidden="true">
+               <p class="pz-pop-title">{{time(s.startTime)}} to {{time(s.endTime)}}, {{availabilityLabel(s).toLowerCase()}}</p>
+               @if(s.names.length){<ul class="pz-people">@for(name of s.names;track $index){<li><span class="pz-face">{{initials(name)}}</span><span>{{name}}</span></li>}</ul>}
+              </div>
+             }
+            </li>
+           }
+          </ul>
+         }
+        </section>
        }
       </div>
+     }@else{
+      <div class="pz-empty">
+       <h3 class="pz-empty-title">{{allTimesBooked()?'Every time on this day is booked':'No times on this day'}}</h3>
+       <p class="pz-empty-text">{{availableOnly?'Try another day, or show the full times too.':'Try another day.'}}</p>
+       @if(availableOnly){<button hlmBtn variant="outline" class="mt-2 h-10 rounded-full px-4" (click)="availableOnly=false">Show full times</button>}
+      </div>
+     }
+    </div>
+   }
+  </section>
+   <p class="pz-foot">All times are Mauritius time.</p>
+  </div>
+ </main>
+</div>
+
+<hlm-dialog #bookingDialog [disableClose]="busy" (closed)="resetBooking()">
+ <hlm-dialog-content *hlmDialogPortal class="pz-dialog max-h-[92dvh] gap-0 overflow-y-auto rounded-3xl bg-transparent p-0 ring-0 sm:max-w-lg" [showCloseButton]="!busy">
+  @if(step===3){
+   <hlm-dialog-header class="pz-hero pz-pass-head">
+    <span class="pz-burst" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="pz-tick" data-booking-success aria-hidden="true"><svg class="pz-check" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+    <h2 hlmDialogTitle class="pz-hero-title">You’re booked, {{name}}.</h2>
+    <p hlmDialogDescription class="pz-hero-date">Your place is held. See you there.</p>
+   </hlm-dialog-header>
+   <div class="pz-pass-roll">
+   @if(calendarEvent; as appointment){
+    <div class="pz-pass-main">
+     <p class="pz-pass-label">{{selected?.name}}</p>
+     <p class="pz-pass-time">{{time(appointment.start)}}<span> to {{time(appointment.end)}}</span></p>
+     <p class="pz-pass-date">{{appointmentDate(appointment.start)}}, Mauritius time</p>
+     <dl class="pz-pass-facts">
+      <div><dt>Name</dt><dd>{{name}}</dd></div>
+      <div><dt>Employee code</dt><dd>{{code}}</dd></div>
+      <div><dt>Business unit</dt><dd>{{sbu}}</dd></div>
+     </dl>
+    </div>
+   }
+   <div class="pz-pass-stub">
+    <div class="pz-pass-ref"><span>Booking reference</span><strong>{{reference}}</strong></div>
+    <div class="grid gap-2 sm:grid-cols-2">
+     <button hlmBtn variant="outline" type="button" class="h-12 rounded-full bg-white px-5 text-[0.9375rem]" (click)="downloadCalendar()"><ng-icon name="lucideCalendarPlus" aria-hidden="true"/>Add to calendar</button>
+     <button hlmBtn class="pz-go h-12 rounded-full px-5 text-[0.9375rem]" (click)="closeBooking()">Done</button>
+    </div>
+    <p class="text-center text-xs text-muted-foreground">To change or cancel, contact your administrator. A downloaded calendar event does not update if your booking changes.</p>
+   </div>
+   </div>
+  }@else{
+   <hlm-dialog-header class="pz-hero" [attr.data-gone]="timeFilled()">
+    @if(slot){
+     <p class="pz-hero-kicker">@if(timeFilled()){<span class="pz-hero-badge">Just taken</span>}@else{{{selected?.name}}}</p>
+     <h2 hlmDialogTitle class="pz-hero-time">{{time(slot.startTime)}}<span> to {{time(slot.endTime)}}</span></h2>
+     <p hlmDialogDescription class="pz-hero-date">{{appointmentDate(slot.startTime)}}, Mauritius time</p>
+     <div class="pz-hero-people">
+      @if(slot.names.length){<span class="pz-faces" aria-hidden="true">@for(person of slot.names;track $index){<span class="pz-face">{{initials(person)}}</span>}</span><span>With {{withNames(slot.names)}}</span>}
+      @else{<span>You’d be the first to book this time.</span>}
      </div>
-    </div>
-   }@else{
-    <h2 hlmDialogTitle>Reserve a massage</h2>
-    <p hlmDialogDescription>Check your session and enter your employee details.</p>
-   }
-  </hlm-dialog-header>
-  @if(step===2){
-   @if(slot){
-    <div hlmAlert>
-     <h3 hlmAlertTitle>{{appointmentDate(slot.startTime)}}</h3>
-     <p hlmAlertDescription class="flex flex-wrap gap-x-1"><span class="whitespace-nowrap font-medium tabular-nums text-foreground">{{time(slot.startTime)}} – {{time(slot.endTime)}}</span> <span class="whitespace-nowrap">· Mauritius time</span></p>
-     <p hlmAlertDescription>{{selected?.name}}</p>
-    </div>
-   }
-   @if(timeFilled()){
-    <div hlmAlert variant="destructive">
-     <ng-icon name="lucideLockKeyhole" size="16" aria-hidden="true"/>
-     <h3 hlmAlertTitle>This time just filled up</h3>
-     <p hlmAlertDescription>Choose another time. We’ll keep your details.</p>
-    </div>
-   }@else if(error() && !duplicateBooking()){<div hlmAlert variant="destructive"><h3 hlmAlertTitle>Booking could not be confirmed</h3><p hlmAlertDescription>{{error()}}</p></div>}
-   <form #detailsForm="ngForm" class="space-y-5" (ngSubmit)="detailsForm.valid && confirm()">
-    <hlm-field-group>
-     <hlm-field><label hlmFieldLabel for="booking-name">Full name</label><input hlmInput id="booking-name" name="name" [(ngModel)]="name" required maxlength="120" autocomplete="name" [disabled]="busy"></hlm-field>
-     <hlm-field><label hlmFieldLabel for="booking-code">Employee code</label><input hlmInput id="booking-code" name="code" [(ngModel)]="code" (ngModelChange)="clearCodeWarning()" required maxlength="120" [disabled]="busy" [forceInvalid]="duplicateBooking()">@if(duplicateBooking()){<hlm-field-error forceShow>Already booked in this campaign.</hlm-field-error>}</hlm-field>
-     <hlm-field><label hlmFieldLabel for="booking-sbu">Business unit (SBU)</label><hlm-select name="sbu" [(ngModel)]="sbu" required [disabled]="busy" class="w-full"><hlm-select-trigger buttonId="booking-sbu" class="w-full"><hlm-select-value placeholder="Select your business unit"/></hlm-select-trigger><hlm-select-content *hlmSelectPortal><hlm-select-item value="">Select your business unit</hlm-select-item>@for(unit of sbus();track unit){<hlm-select-item [value]="unit">{{unit}}</hlm-select-item>}</hlm-select-content></hlm-select></hlm-field>
-    </hlm-field-group>
-    <p class="text-xs text-muted-foreground">One booking per campaign. Contact your administrator for changes or cancellations.</p>
-    <hlm-dialog-footer><button hlmBtn variant="outline" type="button" [disabled]="busy" (click)="closeBooking()">Cancel</button>@if(timeFilled()){<button hlmBtn type="button" [disabled]="busy" (click)="chooseAnotherTime()">Choose another time</button>}@else{<button hlmBtn type="submit" [disabled]="busy||detailsForm.invalid||duplicateBooking()">{{busy ? 'Confirming…' : 'Confirm booking'}}</button>}</hlm-dialog-footer>
-   </form>
-  }@else if(step===3){
-   <div class="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3"><div class="flex items-start gap-3"><ng-icon name="lucideCalendarPlus" size="20" class="mt-0.5 shrink-0" aria-hidden="true"/><div><p class="text-sm font-medium">Add to your calendar</p><p class="text-xs text-muted-foreground">Download and open the file in your calendar app.</p><p class="mt-1 text-xs text-muted-foreground">Calendar details won’t update automatically if your booking changes.</p></div></div><button hlmBtn variant="outline" size="sm" type="button" (click)="downloadCalendar()"><ng-icon name="lucideDownload" aria-hidden="true"/>Download .ics</button></div>
-   <p class="text-sm font-medium">You’re booked, {{name}}.</p>
-   <dl class="grid gap-4 text-sm"><div><dt class="text-muted-foreground">Campaign</dt><dd class="font-medium">{{selected?.name}}</dd></div><div><dt class="text-muted-foreground">Employee</dt><dd>{{code}} · {{sbu}}</dd></div><div><dt class="text-muted-foreground">Booking reference</dt><dd class="break-all">{{reference}}</dd></div></dl>
-   <p class="text-xs text-muted-foreground">For changes or cancellation, contact your administrator.</p><hlm-dialog-footer><button hlmBtn (click)="closeBooking()">Done</button></hlm-dialog-footer>
+    }
+   </hlm-dialog-header>
+   <div class="pz-dialog-body">
+    @if(timeFilled()){
+     <div class="pz-swap" role="status">
+      <h3 class="pz-swap-title">Someone booked the last place a moment ago.</h3>
+      @if(alternatives().length){
+       <p class="pz-swap-text">Your details are kept. Choose one of the closest free times to carry on.</p>
+       <div class="pz-swap-options">
+        @for(option of alternatives();track option.id){
+         <button type="button" class="pz-swap-option" [disabled]="busy" [attr.aria-label]="'Switch to '+time(option.startTime)+' on '+longDay(dayKey(option.startTime))+', '+availabilityLabel(option).toLowerCase()" (click)="switchTo(option)">
+          <span class="pz-swap-time">{{time(option.startTime)}}</span>
+          <span class="pz-swap-day">{{slot&&sameDay(option,slot)?'Same day':dayLabel(dayKey(option.startTime))}}</span>
+          <span class="pz-swap-left">{{placesLeft(option)}} left</span>
+         </button>
+        }
+       </div>
+      }@else{
+       <p class="pz-swap-text">Every other time in this campaign is booked too. Places open up if someone cancels.</p>
+      }
+     </div>
+    }@else if(error() && !duplicateBooking()){<div hlmAlert variant="destructive"><h3 hlmAlertTitle>Booking not confirmed</h3><p hlmAlertDescription>{{error()}}</p></div>}
+    <form #detailsForm="ngForm" class="grid gap-5" (ngSubmit)="detailsForm.valid && !!sbu && confirm()">
+     @if(!timeFilled()){
+     <div class="grid gap-4 sm:grid-cols-2">
+      <hlm-field><label hlmFieldLabel for="booking-name">Full name</label><input hlmInput class="h-12 rounded-xl bg-white md:text-base" id="booking-name" name="name" [(ngModel)]="name" required maxlength="120" autocomplete="name" [disabled]="busy"></hlm-field>
+      <hlm-field><label hlmFieldLabel for="booking-code">Employee code</label><input hlmInput class="h-12 rounded-xl bg-white md:text-base" id="booking-code" #codeInput #codeModel="ngModel" name="code" [ngModel]="code" (ngModelChange)="setCode($event,codeInput,codeModel)" required maxlength="20" inputmode="numeric" autocomplete="off" [disabled]="busy" [forceInvalid]="duplicateBooking()">@if(duplicateBooking()){<hlm-field-error forceShow>This code already has a booking in this campaign.</hlm-field-error>}</hlm-field>
+     </div>
+     @if(sbus().length<=8){
+      <fieldset class="grid gap-2.5">
+       <legend class="mb-2.5 text-sm font-medium">Business unit</legend>
+       <div class="pz-chips">@for(unit of sortedSbus();track unit){<label class="pz-chip"><input type="radio" name="sbu" [value]="unit" [(ngModel)]="sbu" required [disabled]="busy"><span>{{unit}}</span></label>}</div>
+      </fieldset>
+     }@else{
+      <div class="pz-find">
+       <label class="text-sm font-medium" for="booking-sbu-search">Business unit</label>
+       @if(sbu){
+        <div class="pz-picked"><span class="pz-picked-name"><ng-icon name="lucideCheck" size="16" strokeWidth="2.5" aria-hidden="true"/>{{sbu}}</span><button type="button" class="pz-picked-change" [disabled]="busy" (click)="sbu=''">Change</button></div>
+       }@else{
+        <div class="pz-find-panel">
+         <div class="pz-find-box">
+          <ng-icon name="lucideSearch" size="18" aria-hidden="true"/>
+          <input id="booking-sbu-search" type="text" class="pz-find-input" name="unitQuery" [(ngModel)]="unitQuery" [ngModelOptions]="{standalone:true}" placeholder="Type to search, or pick from the list" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" [disabled]="busy" (keydown.enter)="$event.preventDefault();unitOptions().length===1&&chooseUnit(unitOptions()[0])" aria-describedby="booking-sbu-hint">
+         </div>
+         @if(unitOptions().length){
+          <ul class="pz-list" aria-label="Business units">@for(unit of unitOptions();track unit){<li><button type="button" class="pz-list-item" [disabled]="busy" (click)="chooseUnit(unit)">{{unit}}</button></li>}</ul>
+         }@else{
+          <div class="pz-list-empty"><p>Nothing matches “{{unitQuery.trim()}}”.</p>@if(otherUnit(); as other){<button type="button" class="pz-chip-btn" (click)="chooseUnit(other)">Choose {{other}}</button>}</div>
+         }
+        </div>
+        <p class="pz-find-hint" id="booking-sbu-hint" role="status">{{unitQuery.trim()?(unitOptions().length===1?'1 match. Press Enter to choose it.':unitOptions().length+' matches.'):sbus().length+' business units, A to Z.'}}</p>
+       }
+      </div>
+     }
+     }
+     <div class="grid gap-3 pt-1">
+      @if(timeFilled()){<button hlmBtn variant="outline" type="button" class="h-12 w-full rounded-full text-[0.9375rem]" [disabled]="busy" (click)="chooseAnotherTime()">See all times</button>}
+      @else{<button hlmBtn type="submit" class="pz-go h-13 w-full rounded-full text-base" [disabled]="busy||detailsForm.invalid||!sbu||duplicateBooking()">{{busy ? 'Confirming…' : 'Confirm booking'}}</button>}
+      @if(!timeFilled()){<p class="text-center text-xs text-muted-foreground">One booking per person in each campaign.</p>}
+     </div>
+    </form>
+   </div>
   }
  </hlm-dialog-content>
 </hlm-dialog>

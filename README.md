@@ -115,24 +115,24 @@ Scope: this gates requests through the app. Supabase's public `/auth/v1/otp` end
 The workflow in `.github/workflows/pages.yml` builds and publishes pushes to `main`.
 In the GitHub repository, select **Settings → Pages → Source → GitHub Actions**.
 
-- Employee website: https://dk-22.github.io/booking-massage/
-- Administration: https://dk-22.github.io/booking-massage/bk-admin-codex/
-- Admin sign-in callback: https://dk-22.github.io/booking-massage/bk-admin-codex/login/
+- Employee website: https://dk-22.github.io/pause-booking/
+- Administration: https://dk-22.github.io/pause-booking/bk-admin-codex/
+- Admin sign-in callback: https://dk-22.github.io/pause-booking/bk-admin-codex/login/
 
 The Pages build uses `npm run build:pages`. It sets the Angular base path to
-`/booking-massage/` and creates admin entry documents so direct links work.
+`/pause-booking/` and creates admin entry documents so direct links work.
 
 Before using hosted admin sign-in:
 
 1. In Supabase **Authentication → URL Configuration**, set Site URL to
-   `https://dk-22.github.io/booking-massage/` and add both
-   `https://dk-22.github.io/booking-massage/bk-admin-codex/login` and
-   `https://dk-22.github.io/booking-massage/bk-admin-codex/login/` to Redirect URLs.
+   `https://dk-22.github.io/pause-booking/` and add both
+   `https://dk-22.github.io/pause-booking/bk-admin-codex/login` and
+   `https://dk-22.github.io/pause-booking/bk-admin-codex/login/` to Redirect URLs.
    Keep `http://localhost:4200/bk-admin-codex/login` for local development.
 2. In **Edge Functions → Secrets**, set `ADMIN_SIGN_IN_ORIGINS` to
    `http://localhost:4200,https://dk-22.github.io`.
 3. Set `ADMIN_SIGN_IN_REDIRECT_URLS` to
-   `https://dk-22.github.io/booking-massage/bk-admin-codex/login`.
+   `https://dk-22.github.io/pause-booking/bk-admin-codex/login`.
 4. Deploy the updated sign-in function:
 
    ```sh

@@ -1,13 +1,13 @@
 <div hlmSidebarWrapper>
  @if(admin()){
  <hlm-sidebar collapsible="icon">
-  <div hlmSidebarHeader class="p-2"><ul hlmSidebarMenu><li hlmSidebarMenuItem><a hlmSidebarMenuButton size="lg" href="./" tooltip="Pause · Employee Wellness" aria-label="Pause Employee Wellness"><img src="brand/pause-icon.svg" width="32" height="32" class="size-8 shrink-0" alt=""/><div class="grid text-left group-data-[collapsible=icon]:hidden"><span class="font-semibold">Pause</span><span class="text-xs text-muted-foreground">Employee Wellness</span></div></a></li></ul></div>
+  <div hlmSidebarHeader class="p-2"><ul hlmSidebarMenu><li hlmSidebarMenuItem><a hlmSidebarMenuButton size="lg" href="./" tooltip="Pause · Employee Wellness" aria-label="Pause Employee Wellness"><svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true" class="size-8 shrink-0"><circle cx="32" cy="32" r="32" fill="#F6F3EA"/><rect x="21" y="19" width="8" height="26" rx="4" fill="#1F3D32"/><rect x="35" y="19" width="8" height="26" rx="4" fill="#1F3D32"/></svg><div class="grid text-left group-data-[collapsible=icon]:hidden"><span class="font-display text-lg leading-tight">Pause</span><span class="text-xs text-muted-foreground">Employee wellness</span></div></a></li></ul></div>
   <div hlmSidebarContent><div hlmSidebarGroup class="px-3 py-4 group-data-[collapsible=icon]:px-2"><div hlmSidebarGroupLabel class="mb-3 px-3">Management</div><div hlmSidebarGroupContent><ul hlmSidebarMenu class="gap-2">
-   <li hlmSidebarMenuItem><button hlmSidebarMenuButton tooltip="Campaigns" aria-label="Campaigns" class="h-11 gap-3 px-3 data-[active=true]:bg-neutral-200 data-[active=true]:hover:bg-neutral-200 data-[active=true]:font-semibold" closeMobileSidebarOnClick [isActive]="tab==='campaigns'" (click)="navigate('campaigns')"><ng-icon name="lucideMegaphone"/><span>Campaigns</span></button></li>
-   <li hlmSidebarMenuItem><button hlmSidebarMenuButton tooltip="Bookings" aria-label="Bookings" class="h-11 gap-3 px-3 data-[active=true]:bg-neutral-200 data-[active=true]:hover:bg-neutral-200 data-[active=true]:font-semibold" closeMobileSidebarOnClick [isActive]="tab==='bookings'" (click)="navigate('bookings')"><ng-icon name="lucideCalendarCheck"/><span>Bookings</span></button></li>
-   <li hlmSidebarMenuItem><button hlmSidebarMenuButton tooltip="Business units" aria-label="Business units" class="h-11 gap-3 px-3 data-[active=true]:bg-neutral-200 data-[active=true]:hover:bg-neutral-200 data-[active=true]:font-semibold" closeMobileSidebarOnClick [isActive]="tab==='settings'" (click)="navigate('settings')"><ng-icon name="lucideBuilding2"/><span>Business units</span></button></li>
-   <li hlmSidebarMenuItem><button hlmSidebarMenuButton tooltip="Administrators" aria-label="Administrators" class="h-11 gap-3 px-3 data-[active=true]:bg-neutral-200 data-[active=true]:hover:bg-neutral-200 data-[active=true]:font-semibold" closeMobileSidebarOnClick [isActive]="tab==='admins'" (click)="navigate('admins')"><ng-icon name="lucideUsers"/><span>Administrators</span></button></li>
-  </ul></div></div><div hlmSidebarGroup class="mt-auto px-3 group-data-[collapsible=icon]:px-2"><ul hlmSidebarMenu><li hlmSidebarMenuItem><a hlmSidebarMenuButton tooltip="Employee bookings" aria-label="Employee bookings" class="h-11 gap-3 px-3" href="./"><ng-icon name="lucideExternalLink"/><span>Employee bookings</span></a></li></ul></div></div>
+   <li hlmSidebarMenuItem><button hlmSidebarMenuButton tooltip="Campaigns" aria-label="Campaigns" class="h-11 gap-3 px-3 rounded-xl data-[active=true]:bg-[#F6F3EA] data-[active=true]:text-[#1C2A24] data-[active=true]:hover:bg-[#F6F3EA] data-[active=true]:hover:text-[#1C2A24] data-[active=true]:font-semibold" closeMobileSidebarOnClick [isActive]="tab==='campaigns'" (click)="navigate('campaigns')"><ng-icon name="lucideMegaphone"/><span>Campaigns</span></button></li>
+   <li hlmSidebarMenuItem><button hlmSidebarMenuButton tooltip="Bookings" aria-label="Bookings" class="h-11 gap-3 px-3 rounded-xl data-[active=true]:bg-[#F6F3EA] data-[active=true]:text-[#1C2A24] data-[active=true]:hover:bg-[#F6F3EA] data-[active=true]:hover:text-[#1C2A24] data-[active=true]:font-semibold" closeMobileSidebarOnClick [isActive]="tab==='bookings'" (click)="navigate('bookings')"><ng-icon name="lucideCalendarCheck"/><span>Bookings</span></button></li>
+   <li hlmSidebarMenuItem><button hlmSidebarMenuButton tooltip="Business units" aria-label="Business units" class="h-11 gap-3 px-3 rounded-xl data-[active=true]:bg-[#F6F3EA] data-[active=true]:text-[#1C2A24] data-[active=true]:hover:bg-[#F6F3EA] data-[active=true]:hover:text-[#1C2A24] data-[active=true]:font-semibold" closeMobileSidebarOnClick [isActive]="tab==='settings'" (click)="navigate('settings')"><ng-icon name="lucideBuilding2"/><span>Business units</span></button></li>
+   <li hlmSidebarMenuItem><button hlmSidebarMenuButton tooltip="Administrators" aria-label="Administrators" class="h-11 gap-3 px-3 rounded-xl data-[active=true]:bg-[#F6F3EA] data-[active=true]:text-[#1C2A24] data-[active=true]:hover:bg-[#F6F3EA] data-[active=true]:hover:text-[#1C2A24] data-[active=true]:font-semibold" closeMobileSidebarOnClick [isActive]="tab==='admins'" (click)="navigate('admins')"><ng-icon name="lucideUsers"/><span>Administrators</span></button></li>
+  </ul></div></div><div hlmSidebarGroup class="mt-auto px-3 group-data-[collapsible=icon]:px-2"><ul hlmSidebarMenu><li hlmSidebarMenuItem><a hlmSidebarMenuButton tooltip="Open booking page" aria-label="Open booking page in a new tab" class="h-11 gap-3 rounded-xl px-3" href="./" target="_blank" rel="noopener"><ng-icon name="lucideExternalLink"/><span>Open booking page</span></a></li></ul></div></div>
   <div hlmSidebarFooter class="p-2"><ul hlmSidebarMenu><li hlmSidebarMenuItem>
    @if(profileLoading()){<div class="flex items-center gap-2 p-2" role="status" aria-label="Loading user profile"><div hlmSkeleton class="size-8 shrink-0 rounded-full"></div><div class="grid flex-1 gap-2 group-data-[collapsible=icon]:hidden"><div hlmSkeleton class="h-4 w-24"></div><div hlmSkeleton class="h-3 w-full"></div></div></div>}
    @else{<button hlmSidebarMenuButton size="lg" [hlmDropdownMenuTrigger]="userMenu" #accountTrigger="hlmDropdownMenuTrigger" (keydown.escape)="closeAccountMenu($event)" side="right" align="end" class="gap-2 data-[state=open]:bg-sidebar-accent" [attr.aria-label]="'Account menu for '+(profileName()||profileEmail())"><span hlmAvatar><span hlmAvatarFallback>{{initials()}}</span></span><div class="grid min-w-0 flex-1 text-left group-data-[collapsible=icon]:hidden"><span class="truncate font-semibold">{{profileName()||'Administrator'}}</span><span class="truncate text-xs text-muted-foreground">{{profileEmail()}}</span></div><ng-icon name="lucideChevronsUpDown" class="ml-auto group-data-[collapsible=icon]:hidden" aria-hidden="true"/></button>}
@@ -15,30 +15,40 @@
  </hlm-sidebar>
  }
  <main hlmSidebarInset class="min-w-0">
-@if(!admin()){<header class="border-b"><div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-8"><a hlmBtn variant="ghost" href="./" class="h-auto flex-col items-start gap-0.5 px-2 py-1"><span class="text-lg font-semibold leading-tight">Pause</span><span class="text-xs font-normal text-muted-foreground">Employee Wellness</span></a><a hlmBtn variant="ghost" href="./">Employee bookings</a></div></header>}
-<ng-template #userMenu><div hlmDropdownMenu class="w-64" (keydown.escape)="closeAccountMenu($event)"><div hlmDropdownMenuLabel class="flex items-center gap-2 p-2"><span hlmAvatar><span hlmAvatarFallback>{{initials()}}</span></span><div class="min-w-0"><p class="truncate text-sm font-semibold text-foreground">{{profileName()||'Administrator'}}</p><p class="truncate font-normal">{{profileEmail()}}</p></div></div><div hlmDropdownMenuSeparator></div><a hlmDropdownMenuItem href="./" (keydown.escape)="closeAccountMenu($event)">Employee bookings</a><div hlmDropdownMenuSeparator></div><button hlmDropdownMenuItem (keydown.escape)="closeAccountMenu($event)" (triggered)="signOutDialog.open()">Sign out</button></div></ng-template>
+<ng-template #userMenu><div hlmDropdownMenu class="w-64" (keydown.escape)="closeAccountMenu($event)"><div hlmDropdownMenuLabel class="flex items-center gap-2 p-2"><span hlmAvatar><span hlmAvatarFallback>{{initials()}}</span></span><div class="min-w-0"><p class="truncate text-sm font-semibold text-foreground">{{profileName()||'Administrator'}}</p><p class="truncate font-normal">{{profileEmail()}}</p></div></div><div hlmDropdownMenuSeparator></div><button hlmDropdownMenuItem (keydown.escape)="closeAccountMenu($event)" (triggered)="openProfile()"><ng-icon name="lucideUserRoundPen" size="16" aria-hidden="true"/>Edit profile</button><div hlmDropdownMenuSeparator></div><button hlmDropdownMenuItem (keydown.escape)="closeAccountMenu($event)" (triggered)="signOutDialog.open()"><ng-icon name="lucideLogOut" size="16" aria-hidden="true"/>Sign out</button></div></ng-template>
 <div class="mx-auto w-full min-w-0 max-w-7xl space-y-6 px-4 py-6 sm:px-8">
  @if(!ready()){
   <p class="text-sm text-muted-foreground" role="status">Verifying administrator access…</p>
  }@else if(!admin()){
-  <div class="flex min-h-[65vh] items-center justify-center"><section hlmCard class="w-full max-w-sm">
-   <div hlmCardHeader><h1 hlmCardTitle>Administrator sign-in</h1><p hlmCardDescription>Enter your admin email to receive a secure sign-in link.</p></div>
-   <div hlmCardContent><form #loginForm="ngForm" class="space-y-5" (ngSubmit)="loginForm.valid && login()"><hlm-field><label hlmFieldLabel for="admin-email">Email address</label><input hlmInput id="admin-email" type="email" name="email" [(ngModel)]="email" required email autocomplete="email" enterkeyhint="send" [disabled]="busy()" placeholder="name@company.com"></hlm-field><button hlmBtn class="w-full" type="submit" [disabled]="busy()||loginForm.invalid||resendSeconds()>0">{{busy() ? 'Sending…' : resendSeconds()>0 ? 'Try again in '+resendSeconds()+'s' : linkSent() ? 'Send another link' : 'Send sign-in link'}}</button></form>
-    @if(loginNotice()){<div hlmAlert variant="destructive" class="mt-4"><h2 hlmAlertTitle>Unable to send link</h2><p hlmAlertDescription>{{loginNotice()}}</p></div>}
-    @if(linkSent()){<div hlmAlert class="mt-4"><h2 hlmAlertTitle>Check your email</h2><p hlmAlertDescription>If this email has admin access, you’ll receive a sign-in link. Check your inbox and spam folder.</p></div>}
-   </div>
-  </section></div>
+  <div class="pa-signin">
+   <section class="pz-panel">
+    <div class="pz-ripples" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <header class="pz-top"><a class="pz-brand" href="./" aria-label="Pause booking page"><svg width="36" height="36" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#F6F3EA"/><rect x="21" y="19" width="8" height="26" rx="4" fill="#1F3D32"/><rect x="35" y="19" width="8" height="26" rx="4" fill="#1F3D32"/></svg><span class="pz-brand-text"><span>Pause</span><span class="pz-brand-sub">Employee wellness</span></span></a></header>
+    <div class="pz-intro"><div class="grid gap-4"><p class="pz-title">Welcome back.</p><p class="pz-lede">Campaigns, dates and bookings, all in one place.</p></div></div>
+    <ul class="pz-notes"><li>Only approved administrators can sign in.</li></ul>
+   </section>
+   <section class="pa-signin-side">
+    <div class="pa-signin-top"><a class="pz-admin" href="./">Booking page</a></div>
+    <div class="pa-signin-box">
+     <h1 class="pa-signin-title">Sign in to Pause</h1>
+     <p class="pa-signin-text">Enter your work email and we’ll send you a secure sign-in link. No password to remember.</p>
+     <form #loginForm="ngForm" class="mt-8 grid gap-5" (ngSubmit)="loginForm.valid && login()"><hlm-field><label hlmFieldLabel for="admin-email">Email address</label><input hlmInput class="h-12 rounded-xl bg-white md:text-base" id="admin-email" type="email" name="email" [(ngModel)]="email" required email autocomplete="email" enterkeyhint="send" [disabled]="busy()" placeholder="name@company.com"></hlm-field><button hlmBtn class="pz-go h-13 w-full rounded-full text-base" type="submit" [disabled]="busy()||loginForm.invalid||resendSeconds()>0">{{busy() ? 'Sending…' : resendSeconds()>0 ? 'Try again in '+resendSeconds()+'s' : linkSent() ? 'Send another link' : 'Send sign-in link'}}</button></form>
+     @if(loginNotice()){<div hlmAlert variant="destructive" class="mt-5"><h2 hlmAlertTitle>Unable to send link</h2><p hlmAlertDescription>{{loginNotice()}}</p></div>}
+     @if(linkSent()){<div class="pa-sent" role="status"><span class="pz-tick" aria-hidden="true"><ng-icon name="lucideCheck" size="20" strokeWidth="2.5"/></span><div><h2 class="pa-sent-title">Check your email</h2><p class="pa-sent-text">If this address has admin access, a sign-in link is on its way. Look in your spam folder if it hasn’t arrived in a minute.</p></div></div>}
+    </div>
+   </section>
+  </div>
  }@else{
-  <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-   <div class="flex min-w-0 items-center gap-2">
+  <div class="pa-head">
+   <div class="flex min-w-0 items-start gap-3">
     <button hlmSidebarTrigger class="max-sm:size-11" [attr.aria-label]="sidebar.isMobile()?'Open navigation':'Toggle navigation'"></button>
-    <h1 class="text-2xl font-semibold tracking-tight">{{pageTitle}}</h1>
+    <div class="min-w-0"><h1 class="pa-title">{{pageTitle}}</h1><p class="pa-hint">{{pageHint}}</p></div>
    </div>
    @if(tab==='campaigns'){
     @if(editing||bookingCampaign){<button hlmBtn variant="outline" [disabled]="busy()" (click)="editing=false;bookingCampaign=null">Back to campaigns</button>}
-    @else{<button hlmBtn (click)="openEditor()">New campaign</button>}
+    @else{<button hlmBtn class="pz-go" (click)="openEditor()">New campaign</button>}
    }@else if(tab==='admins'){
-    @if(adminUsers(); as directory){<button hlmBtn (click)="directory.edit()" [disabled]="directory.loading()||!!directory.error()">Add administrator</button>}
+    @if(adminUsers(); as directory){<button hlmBtn class="pz-go" (click)="directory.edit()" [disabled]="directory.loading()||!!directory.error()">Add administrator</button>}
    }
   </div>
   <div>
@@ -46,22 +56,47 @@
    @if(tab==='campaigns'){<section class="space-y-6">
     @if(bookingCampaign){<admin-bookings [campaign]="bookingCampaign" (back)="bookingCampaign=null" (saved)="notify($event);load()"/>}
     @else if(editing){
-     <section hlmCard>
+     <section hlmCard class="pa-editor">
       <form #campaignForm="ngForm" (ngSubmit)="campaignForm.valid && confirmSave(publishOnSave ? 'published' : 'draft')">
        <fieldset [disabled]="busy()">
         <div hlmCardContent class="space-y-6">
-         <hlm-field-group class="grid gap-5 sm:grid-cols-2"><hlm-field><label hlmFieldLabel for="campaign-name">Campaign name</label><input hlmInput id="campaign-name" name="name" [(ngModel)]="name" required maxlength="120" placeholder="November wellness sessions"></hlm-field><hlm-field><label hlmFieldLabel for="campaign-description">Description <span class="font-normal text-muted-foreground">(optional)</span></label><input hlmInput id="campaign-description" name="description" [(ngModel)]="description" maxlength="2000" placeholder="A moment to recharge"></hlm-field></hlm-field-group>
+         <div class="pa-edit-top">
+          <hlm-field-group class="grid content-start gap-5"><hlm-field><label hlmFieldLabel for="campaign-name">Campaign name</label><input hlmInput id="campaign-name" name="name" [(ngModel)]="name" required maxlength="120" placeholder="Spring wellness sessions"></hlm-field><hlm-field><label hlmFieldLabel for="campaign-description">Description <span class="font-normal text-muted-foreground">(optional)</span></label><textarea class="pa-textarea" id="campaign-description" name="description" rows="3" [(ngModel)]="description" maxlength="2000" placeholder="One or two sentences telling people what this is."></textarea><p hlmFieldDescription>Shown to employees under the campaign name.</p></hlm-field></hlm-field-group>
+          <aside class="pa-preview" aria-label="Preview of how employees will see this campaign"><p class="pa-preview-label">On the booking page</p><div class="pa-preview-card"><p class="pa-preview-name">{{name||'Campaign name'}}</p><p class="pa-preview-range">{{previewRange()}}</p></div>@if(description){<p class="pa-preview-intro">{{description}}</p>}</aside>
+         </div>
          <hlm-separator/>
-         <div class="flex items-center justify-between gap-4"><div><h3 class="text-sm font-medium">Massage dates</h3><p class="text-xs text-muted-foreground">All times are in Mauritius.</p></div><button hlmBtn variant="outline" type="button" (click)="addDate()">Add a date</button></div>
-         @if(existingDates().length||dates.length){
-          <div hlmTableContainer><table hlmTable><thead hlmTHead><tr hlmTr><th hlmTh>Date and schedule</th><th hlmTh>Status</th><th hlmTh class="text-right">Actions</th></tr></thead><tbody hlmTBody>
-           @for(group of existingDates();track group.id){<tr hlmTr><td hlmTd>{{group.label}}</td><td hlmTd><span hlmBadge variant="success">Saved</span></td><td hlmTd class="text-right"><div class="flex justify-end gap-2"><button hlmBtn variant="ghost" size="sm" type="button" (click)="editScheduled(group.id)" [attr.aria-label]="'Edit scheduled date: '+group.label">Edit</button><button hlmBtn variant="ghost" size="sm" type="button" class="text-destructive" (click)="requestDateRemoval(group.id)" [attr.aria-label]="'Remove scheduled date: '+group.label">Remove</button></div></td></tr>}
-           @for(day of dates;track $index;let i=$index){<tr hlmTr><td hlmTd><p class="font-medium">{{readableDate(day.date)}}</p><p class="text-xs text-muted-foreground">{{day.start}}–{{day.end}} · {{datePreview(day)}} slots · {{datePreview(day)*day.capacity}} places</p></td><td hlmTd><span hlmBadge variant="warning">{{day.sessionId ? 'Edited' : 'New'}} · unsaved</span></td><td hlmTd class="text-right"><div class="flex justify-end gap-2"><button hlmBtn variant="ghost" size="sm" type="button" (click)="openDate(day,i)">Edit</button><button hlmBtn variant="ghost" size="sm" type="button" (click)="requestDateDiscard(i)">Discard</button></div></td></tr>}
-          </tbody></table></div>
-         }@else{<div hlmEmpty class="border"><div hlmEmptyHeader><h3 hlmEmptyTitle>No dates added</h3><p hlmEmptyDescription>Add at least one massage date to accept bookings.</p></div></div>}
-         <p class="text-xs text-muted-foreground">Date changes apply when you save the campaign. Dates with bookings cannot be edited or removed.</p>
+         <div class="pa-sec-head"><div><h3 class="pa-sec-title">Dates</h3><p class="pa-sec-text">When people can book. All times are Mauritius time.</p></div>@if(dateCards().length){<button hlmBtn variant="outline" type="button" (click)="addDate()"><ng-icon name="lucideCalendarPlus" aria-hidden="true"/>Add a date</button>}</div>
+         @if(dateCards().length){
+          <ul class="pa-dates">
+           @for(d of dateCards();track d.key){
+            <li class="pa-date" [attr.data-kind]="d.kind" [attr.data-locked]="d.locked||null">
+             <div class="pa-date-day" aria-hidden="true"><span>{{d.weekday}}</span><strong>{{d.dayNum}}</strong><span>{{d.month}}</span></div>
+             <div class="pa-date-main">
+              <p class="pa-date-range"><span class="sr-only">{{d.label}}, </span>{{d.range}}</p>
+              <p class="pa-date-meta"><span>{{d.slots}} {{d.slots===1?'slot':'slots'}}</span><span>{{d.places}} {{d.places===1?'place':'places'}}</span>@if(d.booked){<span class="pa-date-booked">{{d.booked}} booked</span>}</p>
+              @if(d.kind!=='saved'){<p><span class="pa-flag">{{d.kind==='new'?'New, not saved yet':'Changed, not saved yet'}}</span></p>}
+             </div>
+             <div class="pa-date-actions">
+              @if(d.kind==='saved'){
+               @if(d.locked){<span class="pa-date-lock" title="Dates with bookings cannot be changed or removed"><ng-icon name="lucideLockKeyhole" size="14" aria-hidden="true"/>Has bookings</span>}
+               @else{<button hlmBtn variant="ghost" size="sm" type="button" (click)="editScheduled(d.id)" [attr.aria-label]="'Edit scheduled date: '+d.label">Edit</button><button hlmBtn variant="ghost" size="sm" type="button" class="text-destructive" (click)="requestDateRemoval(d.id)" [attr.aria-label]="'Remove scheduled date: '+d.label">Remove</button>}
+              }@else{<button hlmBtn variant="ghost" size="sm" type="button" (click)="openDate(d.draft,d.index)" [attr.aria-label]="'Edit '+d.label">Edit</button><button hlmBtn variant="ghost" size="sm" type="button" (click)="requestDateDiscard(d.index)" [attr.aria-label]="'Discard '+d.label">Discard</button>}
+             </div>
+            </li>
+           }
+          </ul>
+          <p class="pa-sec-text">Date changes apply when you save the campaign.</p>
+         }@else{
+          <div class="pa-dates-empty"><h4>No dates yet</h4><p>Add the first date so people have something to book.</p><button hlmBtn class="pz-go" type="button" (click)="addDate()"><ng-icon name="lucideCalendarPlus" aria-hidden="true"/>Add a date</button></div>
+         }
          <hlm-separator/>
-         <hlm-field><span class="text-sm font-medium">Campaign visibility</span><div class="flex items-center gap-3"><hlm-switch aria-label="Accept bookings" inputId="campaign-accept-bookings" [checked]="publishOnSave" (checkedChange)="publishOnSave=$event" [disabled]="busy()" aria-describedby="visibility-description"/><label hlmLabel for="campaign-accept-bookings">Accept bookings</label><span hlmBadge variant="secondary">{{publishOnSave ? 'On' : 'Off'}}</span></div><p hlmFieldDescription id="visibility-description" aria-live="polite">{{publishOnSave ? 'Employees can see and book this campaign after you save.' : 'Only admins can see this campaign. Employees can’t view or book it.'}}</p></hlm-field>
+         <div class="pa-vis" role="radiogroup" aria-labelledby="visibility-title">
+          <div><h3 class="pa-sec-title" id="visibility-title">Who can see it</h3><p class="pa-sec-text">You can change this at any time.</p></div>
+          <div class="pa-vis-options">
+           <label class="pa-vis-option"><input type="radio" name="campaignVisibility" [checked]="!publishOnSave" (change)="publishOnSave=false"><span class="pa-vis-body"><span class="pa-vis-icon" aria-hidden="true"><ng-icon name="lucideEyeOff" size="20"/></span><span class="pa-vis-text"><strong>Keep private</strong><span>Only administrators see it. Employees can’t view or book it.</span></span><span class="pa-vis-check" aria-hidden="true"><ng-icon name="lucideCheck" size="14" strokeWidth="3"/></span></span></label>
+           <label class="pa-vis-option"><input type="radio" name="campaignVisibility" [checked]="publishOnSave" (change)="publishOnSave=true"><span class="pa-vis-body"><span class="pa-vis-icon" aria-hidden="true"><ng-icon name="lucideCalendarCheck" size="20"/></span><span class="pa-vis-text"><strong>Open for bookings</strong><span>It appears on the booking page and people can book as soon as you save.</span></span><span class="pa-vis-check" aria-hidden="true"><ng-icon name="lucideCheck" size="14" strokeWidth="3"/></span></span></label>
+          </div>
+         </div>
          @if(saveError()){<div hlmAlert variant="destructive"><h3 hlmAlertTitle>Campaign could not be saved</h3><p hlmAlertDescription>{{saveError()}}</p></div>}
         </div>
         <div hlmCardFooter class="justify-end gap-2 border-t pt-4"><button hlmBtn variant="outline" type="button" (click)="editing=false" [disabled]="busy()">Discard changes</button><button hlmBtn type="submit" [disabled]="busy()||campaignForm.invalid">{{busy() ? 'Saving…' : campaignSaveAction}}</button></div>
@@ -69,47 +104,42 @@
       </form>
      </section>
     }@else{
+     @if(!campaignLoading()&&!campaignError()&&campaigns().length){
+      <dl class="pa-stats" aria-label="Summary of the campaigns listed below">
+       <div class="pa-stat"><dt>Open now</dt><dd>{{listSummary().open}}</dd><p>{{listSummary().open===1?'campaign taking bookings':'campaigns taking bookings'}}</p></div>
+       <div class="pa-stat"><dt>Bookings</dt><dd>{{listSummary().bookings}}</dd><p>across the campaigns listed</p></div>
+       <div class="pa-stat"><dt>Places free</dt><dd>{{listSummary().free}}</dd><p>on upcoming dates</p></div>
+       <div class="pa-stat"><dt>Next date</dt><dd class="pa-stat-date">{{listSummary().next}}</dd><p>in an open campaign</p></div>
+      </dl>
+     }
      <section hlmCard>
       <div hlmCardContent class="space-y-4">
-       <div class="grid gap-4 sm:grid-cols-[1fr_180px]"><hlm-field><label hlmFieldLabel for="campaign-search">Find a campaign</label><input hlmInput id="campaign-search" type="search" [(ngModel)]="search" (ngModelChange)="campaignFilterChanged()" placeholder="Search campaigns…"></hlm-field><hlm-field><label hlmFieldLabel for="campaign-status">Status</label><hlm-select [itemToString]="statusOptionLabel" class="w-full" [(ngModel)]="statusFilter" (ngModelChange)="campaignFilterChanged()"><hlm-select-trigger buttonId="campaign-status" class="w-full"><hlm-select-value placeholder="Select an option"/></hlm-select-trigger><hlm-select-content *hlmSelectPortal><hlm-select-item value="all">All campaigns</hlm-select-item><hlm-select-item value="published">Open for bookings</hlm-select-item><hlm-select-item value="draft">Unpublished</hlm-select-item><hlm-select-item value="closed">Closed</hlm-select-item></hlm-select-content></hlm-select></hlm-field></div>
+       <div class="flex flex-wrap items-end justify-between gap-4"><hlm-field class="min-w-0 flex-1 basis-72"><label hlmFieldLabel for="campaign-search">Find a campaign</label><input hlmInput id="campaign-search" type="search" [(ngModel)]="search" (ngModelChange)="campaignFilterChanged()" placeholder="Search by name…"></hlm-field><div class="pa-seg-group" role="group" aria-label="Filter by status">@for(option of statusOptions;track option){<button type="button" class="pa-seg" [attr.aria-pressed]="statusFilter===option" (click)="statusFilter=option;campaignFilterChanged()">{{statusChip(option)}}</button>}</div></div>
        @if(campaignLoading()){
-        <div role="status" aria-label="Loading campaigns" aria-busy="true"><div hlmTableContainer><table hlmTable><thead hlmTHead><tr hlmTr><th hlmTh>Campaign</th><th hlmTh class="hidden xl:table-cell">Status</th><th hlmTh class="hidden xl:table-cell">Dates</th><th hlmTh class="hidden xl:table-cell">Bookings</th><th hlmTh class="hidden xl:table-cell">Last saved</th><th hlmTh class="text-right">Actions</th></tr></thead><tbody hlmTBody aria-hidden="true">@for(i of [1,2,3,4];track i){<tr hlmTr>
-         <td hlmTd><div class="space-y-2"><div hlmSkeleton class="h-4 w-28 sm:w-36"></div><div hlmSkeleton class="hidden h-3 w-24 xl:block"></div><div hlmSkeleton class="h-5 w-20 xl:hidden"></div></div></td>
-         <td hlmTd class="hidden xl:table-cell"><div hlmSkeleton class="h-5 w-24"></div></td>
-         <td hlmTd class="hidden xl:table-cell"><div class="space-y-2"><div hlmSkeleton class="h-4 w-12"></div><div hlmSkeleton class="h-3 w-28"></div></div></td>
-         <td hlmTd class="hidden xl:table-cell"><div hlmSkeleton class="h-4 w-6"></div></td>
-         <td hlmTd class="hidden xl:table-cell"><div class="space-y-2"><div hlmSkeleton class="h-3 w-28"></div><div hlmSkeleton class="h-3 w-36"></div></div></td>
-         <td hlmTd><div hlmSkeleton class="ml-auto h-7 w-24"></div></td>
+        <div role="status" aria-label="Loading campaigns" aria-busy="true"><div hlmTableContainer><table hlmTable><thead hlmTHead><tr hlmTr><th hlmTh>Campaign</th><th hlmTh class="hidden lg:table-cell">Dates</th><th hlmTh>Bookings</th><th hlmTh class="hidden sm:table-cell">Accepting bookings</th><th hlmTh></th></tr></thead><tbody hlmTBody aria-hidden="true">@for(i of [1,2,3,4];track i){<tr hlmTr>
+         <td hlmTd><div class="space-y-2"><div hlmSkeleton class="h-4 w-28 sm:w-40"></div><div hlmSkeleton class="h-3 w-24"></div></div></td>
+         <td hlmTd class="hidden lg:table-cell"><div class="space-y-2"><div hlmSkeleton class="h-4 w-32"></div><div hlmSkeleton class="h-3 w-24"></div></div></td>
+         <td hlmTd><div class="space-y-2"><div hlmSkeleton class="h-4 w-16"></div><div hlmSkeleton class="h-1.5 w-28"></div></div></td>
+         <td hlmTd class="hidden sm:table-cell"><div hlmSkeleton class="h-6 w-24 rounded-full"></div></td>
+         <td hlmTd><div hlmSkeleton class="ml-auto size-8 rounded-full"></div></td>
         </tr>}</tbody></table></div></div>
        }@else if(campaignError()&&!campaigns().length){<div hlmAlert variant="destructive"><h3 hlmAlertTitle>Unable to load campaigns</h3><p hlmAlertDescription>{{campaignError()}}</p><button hlmBtn variant="outline" (click)="retryCampaigns()">Try again</button></div>}
        @else if(campaigns().length){
-        <div hlmTableContainer><table hlmTable><thead hlmTHead><tr hlmTr><th hlmTh>Campaign</th><th hlmTh class="hidden xl:table-cell">Status</th><th hlmTh class="hidden xl:table-cell">Dates</th><th hlmTh class="hidden xl:table-cell">Bookings</th><th hlmTh class="hidden xl:table-cell">Last saved</th><th hlmTh class="text-right">Actions</th></tr></thead><tbody hlmTBody>
-         @for(c of campaigns();track c.id){
-          <ng-template #campaignBadge><span hlmBadge [variant]="c.status==='published'?'success':c.status==='draft'?'warning':'destructive'">{{c.status==='published'?'Bookings open':c.status==='draft'?'Unpublished':'Closed'}}</span></ng-template>
-          <ng-template #campaignSchedule><p>{{count(c.id)}} {{count(c.id)===1?'date':'dates'}}</p><p class="max-w-48 whitespace-normal text-xs text-muted-foreground">{{campaignDates(c.id).join(', ')}}</p></ng-template>
-          <ng-template #campaignSaved>@if(saveInfo()[c.id]; as info){<p class="text-xs tabular-nums">{{historyTime(info.saved_at)}}</p><p class="whitespace-normal text-xs text-muted-foreground">{{info.saved_by}}</p>}@else{<span class="text-xs text-muted-foreground">Not available</span>}</ng-template>
-          <tr hlmTr>
-           <td hlmTd class="max-w-64 whitespace-normal align-top xl:align-middle">
-            <p class="break-words font-medium">{{c.name}}</p>
-            @if(c.description){<p class="hidden text-xs text-muted-foreground xl:block">{{c.description}}</p>}
-            <div class="mt-1 space-y-1 xl:hidden">
-             <ng-container *ngTemplateOutlet="campaignBadge"/>
-             <div brnCollapsible>
-              <button hlmBtn brnCollapsibleTrigger variant="ghost" size="sm" class="group/details -ml-1 px-1" [attr.aria-label]="'Details for '+c.name">Details<ng-icon name="lucideChevronDown" class="group-data-[state=open]/details:rotate-180" aria-hidden="true"/></button>
-              <div brnCollapsibleContent [id]="'campaign-details-'+c.id" class="space-y-2 pb-1 data-[state=closed]:hidden">
-               @if(c.description){<p class="break-words text-xs text-muted-foreground">{{c.description}}</p>}
-               <ng-container *ngTemplateOutlet="campaignSchedule"/>
-               <p class="text-xs tabular-nums">{{campaignBookings(c.id)}} {{campaignBookings(c.id)===1?'booking':'bookings'}}</p>
-               <div><p class="text-xs text-muted-foreground">Last saved</p><ng-container *ngTemplateOutlet="campaignSaved"/></div>
-              </div>
-             </div>
-            </div>
+        <div hlmTableContainer><table hlmTable><thead hlmTHead><tr hlmTr><th hlmTh>Campaign</th><th hlmTh class="hidden lg:table-cell">Dates</th><th hlmTh>Bookings</th><th hlmTh class="hidden sm:table-cell">Accepting bookings</th><th hlmTh class="text-right"><span class="sr-only">More actions</span></th></tr></thead><tbody hlmTBody>
+         @for(c of sortedCampaigns();track c.id){
+          <ng-template #toggle><div class="pa-toggle pa-over"><button type="button" role="switch" class="pa-switch" [attr.aria-checked]="c.status==='published'" [disabled]="busy()||(needsDate(c.id)&&c.status!=='published')" [attr.aria-label]="'Accept bookings for '+c.name" [attr.title]="needsDate(c.id)&&c.status!=='published'?'Add a date before opening bookings':null" (click)="requestCampaignStatus(c,c.status==='published'?'closed':'published')"><span></span></button><span class="pa-toggle-label">{{c.status==='published'?'Open':c.status==='draft'?'Unpublished':'Closed'}}</span></div></ng-template>
+          <tr hlmTr class="pa-row" [attr.data-status]="c.status">
+           <td hlmTd class="max-w-80 whitespace-normal">
+            <button type="button" class="pa-row-link" (click)="openEditor(c)" [attr.aria-label]="'Open '+c.name+' to edit'">{{c.name}}</button>
+            @if(c.description){<p class="pa-row-sub">{{c.description}}</p>}
+            <p class="pa-row-sub lg:hidden">{{dateSummary(c.id).main}}</p>
+            @if(needsDate(c.id)){<p><span class="pa-flag">Needs a date</span></p>}
+            <div class="mt-2.5 sm:hidden"><ng-container *ngTemplateOutlet="toggle"/></div>
            </td>
-           <td hlmTd class="hidden xl:table-cell"><ng-container *ngTemplateOutlet="campaignBadge"/></td>
-           <td hlmTd class="hidden xl:table-cell"><ng-container *ngTemplateOutlet="campaignSchedule"/></td>
-           <td hlmTd class="hidden tabular-nums xl:table-cell">{{campaignBookings(c.id)}}</td>
-           <td hlmTd class="hidden xl:table-cell"><ng-container *ngTemplateOutlet="campaignSaved"/></td>
-           <td hlmTd class="align-top xl:align-middle"><div class="flex items-center justify-end gap-1"><button hlmBtn variant="outline" size="sm" class="max-sm:min-h-11" (click)="bookingCampaign=c;editing=false">View bookings</button><button hlmBtn variant="ghost" size="icon-sm" class="max-sm:size-11" [hlmDropdownMenuTrigger]="campaignActions" align="end" [attr.aria-label]="'More actions for '+c.name"><ng-icon name="lucideEllipsis" aria-hidden="true"/></button></div><ng-template #campaignActions><div hlmDropdownMenu class="w-48"><button hlmDropdownMenuItem (triggered)="openEditor(c)">Edit campaign</button><button hlmDropdownMenuItem (triggered)="viewHistory(c)">View history</button>@if(c.status==='published'){<button hlmDropdownMenuItem [disabled]="busy()" (triggered)="requestCampaignStatus(c,'closed')">Close bookings</button>}@else{<button hlmDropdownMenuItem [disabled]="busy()" (triggered)="requestCampaignStatus(c,'published')">Publish campaign</button>}<div hlmDropdownMenuSeparator></div><button hlmDropdownMenuItem variant="destructive" [disabled]="busy()" (triggered)="deleteTarget=c">Delete campaign</button></div></ng-template></td>
+           <td hlmTd class="hidden whitespace-normal lg:table-cell"><p>{{dateSummary(c.id).main}}</p>@if(dateSummary(c.id).sub){<p class="pa-row-sub">{{dateSummary(c.id).sub}}</p>}</td>
+           <td hlmTd><button type="button" class="pa-fill pa-over" (click)="bookingCampaign=c;editing=false" [attr.aria-label]="'View bookings for '+c.name+': '+campaignBookings(c.id)+(campaignCapacity(c.id)?' of '+campaignCapacity(c.id)+' places':'')"><span class="pa-fill-text"><strong>{{campaignBookings(c.id)}}</strong>@if(campaignCapacity(c.id)){<span> of {{campaignCapacity(c.id)}}</span>}</span><span class="pa-fill-bar" aria-hidden="true"><span [style.width.%]="campaignFill(c.id)"></span></span></button></td>
+           <td hlmTd class="hidden sm:table-cell"><ng-container *ngTemplateOutlet="toggle"/></td>
+           <td hlmTd><div class="pa-over flex items-center justify-end"><button hlmBtn variant="ghost" size="icon-sm" class="max-sm:size-11" [hlmDropdownMenuTrigger]="campaignActions" align="end" [attr.aria-label]="'More actions for '+c.name"><ng-icon name="lucideEllipsis" aria-hidden="true"/></button></div><ng-template #campaignActions><div hlmDropdownMenu class="w-48"><button hlmDropdownMenuItem (triggered)="openEditor(c)">Edit campaign</button><button hlmDropdownMenuItem (triggered)="bookingCampaign=c;editing=false">View bookings</button><button hlmDropdownMenuItem (triggered)="viewHistory(c)">View history</button><div hlmDropdownMenuSeparator></div><button hlmDropdownMenuItem variant="destructive" [disabled]="busy()" (triggered)="deleteTarget=c">Delete campaign</button></div></ng-template></td>
           </tr>
          }
         </tbody></table></div>
@@ -119,8 +149,42 @@
      </section>
     }
    </section>
-   }@else if(tab==='settings'){<section>
-    <section hlmCard class="max-w-2xl"><form #settingsForm="ngForm" (ngSubmit)="settingsForm.valid && saveSbus()"><div hlmCardContent><hlm-field><label hlmFieldLabel for="sbu-settings">Business units</label>@if(campaignLoading()){<div hlmSkeleton class="h-9 w-full" role="status" aria-label="Loading business units" aria-busy="true"></div>}@else{<input hlmInput id="sbu-settings" name="sbus" [(ngModel)]="sbus" required placeholder="Technology, CXO, Other">}<p hlmFieldDescription>These are the units employees can choose when booking. Separate them with commas.</p></hlm-field></div><div hlmCardFooter class="border-t pt-4"><button hlmBtn type="submit" [disabled]="busy()||campaignLoading()||!!campaignError()||settingsForm.invalid">{{busy() ? 'Saving…' : 'Save settings'}}</button></div></form></section>
+   }@else if(tab==='settings'){<section class="pa-units">
+    <section hlmCard class="pa-editor min-w-0"><form #settingsForm="ngForm" (ngSubmit)="unitList().length && unitsDirty() && saveSbus()">
+     <div hlmCardContent class="grid gap-6">
+      <div class="grid gap-3">
+       <label class="pa-sec-title" for="sbu-add">Add a business unit</label>
+       <div class="pa-unit-add"><div class="pa-search"><ng-icon name="lucideBuilding2" size="18" aria-hidden="true"/><input id="sbu-add" type="text" name="unitDraft" [(ngModel)]="unitDraft" [ngModelOptions]="{standalone:true}" placeholder="Type a name and press Enter" autocomplete="off" maxlength="200" [disabled]="busy()||campaignLoading()" (keydown.enter)="$event.preventDefault();addUnits()" aria-describedby="sbu-add-hint"></div><button hlmBtn type="button" class="pz-go" [disabled]="busy()||campaignLoading()||!unitDraft.trim()" (click)="addUnits()">Add</button></div>
+       <p class="pa-sec-text" id="sbu-add-hint" role="status">@if(unitError()){<span class="pa-unit-error">{{unitError()}}</span>}@else{Add several at once by separating them with commas.}</p>
+      </div>
+      <hlm-separator/>
+      <div class="grid gap-4">
+       <div class="pa-sec-head"><div><h2 class="pa-sec-title">@if(campaignLoading()){<span>Business units</span>}@else{<span>{{unitList().length}} {{unitList().length===1?'business unit':'business units'}}</span>}</h2><p class="pa-sec-text">Employees see them A to Z, with “Other” always last.</p></div></div>
+       @if(campaignLoading()){
+        <div class="pa-unit-list" role="status" aria-label="Loading business units" aria-busy="true">@for(i of [1,2,3,4,5];track i){<div hlmSkeleton class="h-11 w-28 rounded-full"></div>}</div>
+       }@else if(unitList().length){
+        <ul class="pa-unit-list" aria-label="Business units">
+         @for(unit of sortedUnits();track unit){
+          <li class="pa-unit" [attr.data-new]="isNewUnit(unit)||null"><span class="pa-unit-name">{{unit}}</span>@if(isNewUnit(unit)){<span class="pa-unit-tag">New</span>}<button type="button" class="pa-unit-x" [disabled]="busy()" (click)="removeUnit(unit)" [attr.aria-label]="'Remove '+unit"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></li>
+         }
+        </ul>
+       }@else{
+        <div class="pa-dates-empty"><h4>No business units</h4><p>Add at least one so employees can complete a booking.</p></div>
+       }
+       @if(removedUnits().length){
+        <div class="pa-unit-removed"><p class="pa-sec-text">Removed when you save:</p><ul class="pa-unit-list">@for(unit of removedUnits();track unit){<li class="pa-unit" data-removed="true"><span class="pa-unit-name">{{unit}}</span><button type="button" class="pa-unit-undo" [disabled]="busy()" (click)="restoreUnit(unit)" [attr.aria-label]="'Keep '+unit">Undo</button></li>}</ul></div>
+       }
+      </div>
+     </div>
+     <div hlmCardFooter class="flex-wrap items-center justify-between gap-3 border-t pt-4"><p class="text-sm" [class.pa-dirty]="unitsDirty()" role="status">{{unitsDirty()?'You have unsaved changes.':'Everything is saved.'}}</p><div class="flex flex-wrap gap-2"><button hlmBtn variant="outline" type="button" [disabled]="busy()||!unitsDirty()" (click)="resetUnits()">Undo changes</button><button hlmBtn type="submit" [disabled]="busy()||campaignLoading()||!!campaignError()||!unitsDirty()||!unitList().length">{{busy() ? 'Saving…' : 'Save changes'}}</button></div></div>
+    </form></section>
+    <aside class="pa-preview" aria-label="Preview of how employees choose a business unit"><p class="pa-preview-label">On the booking form</p>
+     <div class="pa-preview-card"><p class="pa-preview-name">Business unit</p>
+      @if(unitList().length<=8){<div class="pa-preview-chips">@for(unit of sortedUnits();track unit){<span>{{unit}}</span>}</div>}
+      @else{<div class="pa-preview-search">Type to search, or pick from the list</div><ul class="pa-preview-list">@for(unit of sortedUnits().slice(0,5);track unit){<li>{{unit}}</li>}<li class="pa-preview-more">and {{unitList().length-5}} more</li></ul>}
+     </div>
+     <p class="pa-preview-note">{{unitList().length<=8?'With eight or fewer, employees tap a chip.':'With more than eight, employees search or scroll a list.'}}</p>
+    </aside>
    </section>
   }@else if(tab==='admins'){<admin-users [currentEmail]="profileEmail()" (saved)="notify($event)" (profileChanged)="refreshProfile()"/>}
   @else if(tab==='bookings'){
@@ -169,9 +233,9 @@
  </hlm-dialog-content>
 </hlm-dialog>
 <hlm-dialog #dateDialog [disableClose]="busy()" (closed)="dateDraft=null">
- <hlm-dialog-content *hlmDialogPortal class="max-h-[90dvh] overflow-y-auto sm:max-w-lg"><hlm-dialog-header><h2 hlmDialogTitle>{{dateDraft?.sessionId ? 'Edit massage date' : 'Add massage date'}}</h2><p hlmDialogDescription>Configure the schedule and number of places. All times are in Mauritius.</p></hlm-dialog-header>
+ <hlm-dialog-content *hlmDialogPortal class="max-h-[90dvh] overflow-y-auto sm:max-w-lg"><hlm-dialog-header><h2 hlmDialogTitle>{{dateDraft?.sessionId ? 'Edit date' : 'Add date'}}</h2><p hlmDialogDescription>Configure the schedule and number of places. All times are in Mauritius.</p></hlm-dialog-header>
   @if(dateDraft){<form #dateForm="ngForm" class="space-y-5" (ngSubmit)="dateForm.valid && applyDate()"><hlm-field-group class="grid grid-cols-2 gap-4 sm:grid-cols-3">
-   <hlm-field class="col-span-2 sm:col-span-1"><label hlmFieldLabel for="massage-date">Date</label><hlm-date-picker name="date" [ngModel]="pickerDate(dateDraft.date)" (ngModelChange)="setPickerDate($event)" [formatDate]="formatPickerDate" captionLayout="dropdown" autoCloseOnSelect required><hlm-date-picker-trigger buttonId="massage-date" class="w-full">Pick a date</hlm-date-picker-trigger></hlm-date-picker></hlm-field>
+   <hlm-field class="col-span-2 sm:col-span-1"><label hlmFieldLabel for="session-date">Date</label><hlm-date-picker name="date" [ngModel]="pickerDate(dateDraft.date)" (ngModelChange)="setPickerDate($event)" [formatDate]="formatPickerDate" captionLayout="dropdown" autoCloseOnSelect required><hlm-date-picker-trigger buttonId="session-date" class="w-full">Pick a date</hlm-date-picker-trigger></hlm-date-picker></hlm-field>
    <hlm-field><label hlmFieldLabel for="date-start">Start</label><input type="hidden" name="start" [(ngModel)]="dateDraft.start" required><hlm-popover align="start" [state]="timeMenu==='start' ? 'open' : 'closed'" (stateChanged)="timeMenu=$event==='open' ? 'start' : ''"><button hlmBtn variant="outline" type="button" id="date-start" hlmPopoverTrigger class="w-full justify-between">{{dateDraft.start}}<ng-icon name="lucideClock" aria-hidden="true"/></button><div hlmPopoverContent *hlmPopoverPortal class="w-64 gap-4"><p class="text-sm font-medium">Start time · 24-hour</p><div class="grid grid-cols-2 gap-3"><hlm-field><label hlmFieldLabel for="start-hour">Hour</label><hlm-select class="w-full" [ngModel]="timePart('start',0)" (ngModelChange)="setTimePart('start',0,$event)" [ngModelOptions]="{standalone:true}"><hlm-select-trigger buttonId="start-hour" class="w-full"><hlm-select-value placeholder="Select an option"/></hlm-select-trigger><hlm-select-content *hlmSelectPortal>@for(hour of timeHours;track hour){<hlm-select-item [value]="hour">{{hour}}</hlm-select-item>}</hlm-select-content></hlm-select></hlm-field><hlm-field><label hlmFieldLabel for="start-minute">Minute</label><hlm-select class="w-full" [ngModel]="timePart('start',1)" (ngModelChange)="setTimePart('start',1,$event)" [ngModelOptions]="{standalone:true}"><hlm-select-trigger buttonId="start-minute" class="w-full"><hlm-select-value placeholder="Select an option"/></hlm-select-trigger><hlm-select-content *hlmSelectPortal>@for(minute of timeMinutes;track minute){<hlm-select-item [value]="minute">{{minute}}</hlm-select-item>}</hlm-select-content></hlm-select></hlm-field></div><button hlmBtn type="button" (click)="timeMenu=''">Done</button></div></hlm-popover></hlm-field>
    <hlm-field><label hlmFieldLabel for="date-end">End</label><input type="hidden" name="end" [(ngModel)]="dateDraft.end" required><hlm-popover align="start" [state]="timeMenu==='end' ? 'open' : 'closed'" (stateChanged)="timeMenu=$event==='open' ? 'end' : ''"><button hlmBtn variant="outline" type="button" id="date-end" hlmPopoverTrigger class="w-full justify-between">{{dateDraft.end}}<ng-icon name="lucideClock" aria-hidden="true"/></button><div hlmPopoverContent *hlmPopoverPortal class="w-64 gap-4"><p class="text-sm font-medium">End time · 24-hour</p><div class="grid grid-cols-2 gap-3"><hlm-field><label hlmFieldLabel for="end-hour">Hour</label><hlm-select class="w-full" [ngModel]="timePart('end',0)" (ngModelChange)="setTimePart('end',0,$event)" [ngModelOptions]="{standalone:true}"><hlm-select-trigger buttonId="end-hour" class="w-full"><hlm-select-value placeholder="Select an option"/></hlm-select-trigger><hlm-select-content *hlmSelectPortal>@for(hour of timeHours;track hour){<hlm-select-item [value]="hour">{{hour}}</hlm-select-item>}</hlm-select-content></hlm-select></hlm-field><hlm-field><label hlmFieldLabel for="end-minute">Minute</label><hlm-select class="w-full" [ngModel]="timePart('end',1)" (ngModelChange)="setTimePart('end',1,$event)" [ngModelOptions]="{standalone:true}"><hlm-select-trigger buttonId="end-minute" class="w-full"><hlm-select-value placeholder="Select an option"/></hlm-select-trigger><hlm-select-content *hlmSelectPortal>@for(minute of timeMinutes;track minute){<hlm-select-item [value]="minute">{{minute}}</hlm-select-item>}</hlm-select-content></hlm-select></hlm-field></div><button hlmBtn type="button" (click)="timeMenu=''">Done</button></div></hlm-popover></hlm-field>
    <hlm-field><label hlmFieldLabel for="date-duration">Duration (min)</label><input hlmInput id="date-duration" type="number" name="duration" [(ngModel)]="dateDraft.duration" min="5" max="180" required></hlm-field>
@@ -187,7 +251,19 @@
  <hlm-alert-dialog-content *hlmAlertDialogPortal><hlm-alert-dialog-header><h2 hlmAlertDialogTitle>{{campaignSaveAction==='Save and publish'?'Save and publish campaign?':campaignSaveAction==='Save and unpublish'?'Save and unpublish campaign?':'Save campaign changes?'}}</h2><p hlmAlertDialogDescription>{{campaignSaveDescription}}@if(removedSessions.length){ {{removedSessions.length}} scheduled {{removedSessions.length===1?'date':'dates'}} will be removed.}</p></hlm-alert-dialog-header><hlm-alert-dialog-footer><button variant="outline" hlmAlertDialogCancel>Keep editing</button><button hlmAlertDialogAction (click)="acceptSave()">{{campaignSaveAction==='Save and publish'?'Confirm and publish':campaignSaveAction==='Save and unpublish'?'Confirm and unpublish':'Confirm save'}}</button></hlm-alert-dialog-footer></hlm-alert-dialog-content>
 </hlm-alert-dialog>
 @if(deleteTarget){<hlm-alert-dialog state="open" [disableClose]="busy()" (closed)="deleteTarget=null"><hlm-alert-dialog-content *hlmAlertDialogPortal><hlm-alert-dialog-header><h2 hlmAlertDialogTitle>Delete campaign?</h2><p hlmAlertDialogDescription>“{{deleteTarget.name}}” and its dates will be permanently removed. Campaigns with booking history cannot be deleted.</p></hlm-alert-dialog-header><hlm-alert-dialog-footer><button variant="outline" hlmAlertDialogCancel [disabled]="busy()">Keep campaign</button><button hlmAlertDialogAction variant="destructive" (click)="deleteCampaign()" [disabled]="busy()">{{busy() ? 'Deleting…' : 'Delete permanently'}}</button></hlm-alert-dialog-footer></hlm-alert-dialog-content></hlm-alert-dialog>}
-<hlm-toaster position="top-right" [visibleToasts]="1" [closeButton]="true"/>
+<hlm-toaster position="bottom-center" [visibleToasts]="1" [closeButton]="true"/>
+
+<hlm-dialog #profileDialog [disableClose]="profileBusy()">
+ <hlm-dialog-content *hlmDialogPortal class="max-h-[90dvh] overflow-y-auto sm:max-w-md" [showCloseButton]="!profileBusy()">
+  <hlm-dialog-header><h2 hlmDialogTitle>Edit profile</h2><p hlmDialogDescription>Change the name shown in Pause and in the campaign history.</p></hlm-dialog-header>
+  <form #profileForm="ngForm" class="grid gap-5" (ngSubmit)="profileForm.valid && saveProfile()">
+   <div class="pa-profile-id"><span class="pa-avatar pa-avatar-lg" aria-hidden="true">{{initials()}}</span><div class="min-w-0"><p class="pa-profile-label">Signed in as</p><p class="pa-profile-email">{{profileEmail()}}</p></div></div>
+   <hlm-field><label hlmFieldLabel for="profile-name">Full name</label>@if(profileReady()||profileError()){<input hlmInput id="profile-name" name="profileName" [(ngModel)]="profileDraft" required maxlength="120" autocomplete="name" [disabled]="profileBusy()||!profileReady()">}@else{<div hlmSkeleton class="h-11 w-full rounded-xl" role="status" aria-label="Loading your profile"></div>}<p hlmFieldDescription>Your email address can’t be changed here.</p></hlm-field>
+   @if(profileError()){<div hlmAlert variant="destructive"><h3 hlmAlertTitle>{{profileReady()?"Your name could not be saved":"Your profile could not be loaded"}}</h3><p hlmAlertDescription>{{profileError()}}</p></div>}
+   <hlm-dialog-footer><button hlmBtn variant="outline" type="button" [disabled]="profileBusy()" (click)="profileDialog.close()">Cancel</button><button hlmBtn type="submit" [disabled]="profileBusy()||!profileReady()||!profileDraft.trim()||profileDraft.trim()===profileName().trim()">{{profileBusy()?'Saving…':'Save name'}}</button></hlm-dialog-footer>
+  </form>
+ </hlm-dialog-content>
+</hlm-dialog>
 
 <hlm-alert-dialog #signOutDialog [disableClose]="signingOut()">
  <hlm-alert-dialog-content *hlmAlertDialogPortal>

@@ -12,6 +12,11 @@ export class AdminUsers implements OnDestroy{
  constructor(){void this.load();}ngOnDestroy(){clearTimeout(this.timer);this.request++;}
  filter(){this.page=0;this.loading.set(true);clearTimeout(this.timer);this.timer=setTimeout(()=>void this.load(),250);}
  async load(){const sequence=++this.request;this.loading.set(true);this.error.set('');try{const result=await rpc('admin_directory',{p_search:this.search.trim(),p_page:this.page});if(sequence!==this.request)return;this.rows.set(result.rows);this.total.set(result.total);}catch(e:any){if(sequence===this.request)this.error.set(e.code==='PGRST202'?'Apply database migration 014 to enable administrator management.':e.message||'Unable to load administrators.');}finally{if(sequence===this.request)this.loading.set(false);}}
+ statusFilter='';
+ shown(){return this.rows().filter(row=>!this.statusFilter||(this.statusFilter==='active')===!!row.enabled);}
+ countOf(status:string){return this.rows().filter(row=>!status||(status==='active')===!!row.enabled).length;}
+ initials(row:any){const source=String(row.full_name||'').trim()||String(row.email||'').split('@')[0].replace(/[._-]+/g,' ');return source.split(/\s+/).filter(Boolean).slice(0,2).map(word=>word.charAt(0).toUpperCase()).join('')||'?';}
+ isSelf(row:any){return String(row.email||'').toLowerCase()===this.currentEmail.toLowerCase();}
  move(delta:number){this.page+=delta;void this.load();}
  edit(row?:any){this.draft=row?{...row}:{full_name:'',email:''};this.editError.set('');this.editor?.open();}
  async save(){if(this.busy()||!this.draft)return;this.busy.set(true);this.editError.set('');try{await rpc('save_administrator',{p_email:this.draft.email.trim().toLowerCase(),p_full_name:this.draft.full_name.trim(),p_expected:this.draft.updated_at||null});const own=this.draft.email.toLowerCase()===this.currentEmail.toLowerCase();this.editor?.close();this.saved.emit('Administrator saved.');if(own)this.profileChanged.emit();await this.load();}catch(e:any){this.editError.set(e.message||'Unable to save administrator.');}finally{this.busy.set(false);}}

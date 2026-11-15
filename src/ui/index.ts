@@ -7,7 +7,7 @@ import {HlmAvatarImports} from './avatar';
 import {HlmDatePickerImports} from './date-picker';
 import {HlmSkeletonImports} from './skeleton';
 import {NgIcon,provideIcons} from '@ng-icons/core';
-import {lucideDownload,lucideCalendarPlus,lucideLockKeyhole,lucideUserRound,lucideEyeOff,lucideMegaphone,lucideChevronsUpDown,lucideEllipsis,lucideClock,lucideChevronDown,lucideCalendarDays,lucideCalendarCheck,lucideBuilding2,lucideUsers,lucideExternalLink,lucideCheck} from '@ng-icons/lucide';
+import {lucideDownload,lucideCalendarPlus,lucideLockKeyhole,lucideUserRound,lucideEyeOff,lucideMegaphone,lucideChevronsUpDown,lucideEllipsis,lucideClock,lucideChevronDown,lucideCalendarDays,lucideCalendarCheck,lucideBuilding2,lucideUsers,lucideExternalLink,lucideCheck,lucideSearch,lucideLogOut,lucideUserRoundPen} from '@ng-icons/lucide';
 import {HlmTableImports} from './table';
 import {HlmEmptyImports} from './empty';
 import {HlmFieldImports} from './field';
@@ -28,4 +28,4 @@ import {HlmDropdownMenuImports} from './dropdown-menu';
 import {HlmAlertImports} from './alert';
 export const UI_IMPORTS=[HlmHoverCardImports,HlmSwitchImports,HlmTraceImports,HlmSelectImports,HlmSidebarImports,HlmAvatarImports,HlmDatePickerImports,HlmSkeletonImports,NgIcon,HlmTableImports,HlmEmptyImports,HlmFieldImports,HlmRadioGroupImports,HlmToasterImports,HlmDialogImports,HlmAlertDialogImports,HlmSeparatorImports,HlmTabsImports,HlmPopoverImports,HlmButtonImports,HlmInputImports,HlmLabelImports,HlmCardImports,HlmBadgeImports,HlmCheckboxImports,HlmDropdownMenuImports,HlmAlertImports] as const;
 
-export const UI_ICON_PROVIDERS=provideIcons({lucideDownload,lucideCalendarPlus,lucideLockKeyhole,lucideUserRound,lucideEyeOff,lucideMegaphone,lucideChevronsUpDown,lucideEllipsis,lucideClock,lucideChevronDown,lucideCalendarDays,lucideCalendarCheck,lucideBuilding2,lucideUsers,lucideExternalLink,lucideCheck});
+export const UI_ICON_PROVIDERS=provideIcons({lucideDownload,lucideCalendarPlus,lucideLockKeyhole,lucideUserRound,lucideEyeOff,lucideMegaphone,lucideChevronsUpDown,lucideEllipsis,lucideClock,lucideChevronDown,lucideCalendarDays,lucideCalendarCheck,lucideBuilding2,lucideUsers,lucideExternalLink,lucideCheck,lucideSearch,lucideLogOut,lucideUserRoundPen});
