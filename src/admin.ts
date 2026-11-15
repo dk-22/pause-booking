@@ -22,6 +22,12 @@ export class AdminPortal implements OnDestroy {
   if(this.tab==='admins')return 'Administrators';
   return this.tab==='settings'?'Business units':'Campaigns';
  }
+ get pageDescription(){
+  if(this.bookingCampaign||this.tab==='bookings')return 'Find an employee, update a reservation, or free up a place.';
+  if(this.editing)return 'Set the schedule and decide when employees can book.';
+  if(this.tab==='admins')return 'Manage the people who look after Pause.';
+  return this.tab==='settings'?'Choose the business units available on the booking form.':'Your massage events, schedules, and booking availability.';
+ }
  get campaignSaveAction(){
   if(this.publishOnSave&&this.editingStatus!=='published')return 'Save and publish';
   if(!this.publishOnSave&&this.editingStatus==='published')return 'Save and unpublish';

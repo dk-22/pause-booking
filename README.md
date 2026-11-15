@@ -13,7 +13,7 @@ Open http://localhost:4200. `npm start` uses the development configuration with 
 
 ## Interface
 
-All active screens use Spartan's Nova components and default neutral theme. The original custom UI has been removed, including particle effects, GSAP, legacy stylesheets, custom cards, dialog wrappers and notification styling.
+All active screens use Spartan's Nova components with Pause's neutral surfaces and deep green theme. The original custom UI has been removed, including particle effects, GSAP, legacy stylesheets, custom cards, dialog wrappers and notification styling.
 
 - `src/booking-page.html`: campaign/date selection, time table, booking form and confirmation.
 - `src/admin-page.html`: sign-in, campaign table/editor, settings, history and confirmations.
@@ -21,7 +21,7 @@ All active screens use Spartan's Nova components and default neutral theme. The 
 - `src/ui`: source-owned Helm components from Spartan 1.9.0; see its README and MIT license.
 - `src/theme.css`: Tailwind v4 setup and standard semantic theme tokens. Fonts are bundled locally.
 
-Notifications use Spartan Sonner at the top right. Dialogs and alert dialogs use Spartan's own focus, keyboard and transition behavior. There are no application-specific component CSS overrides.
+Notifications use Spartan Sonner at the top right. Dialogs and alert dialogs use Spartan's own focus, keyboard and transition behavior. Shared screen and component treatments are defined in src/theme.css.
 
 ## Browser checks
 

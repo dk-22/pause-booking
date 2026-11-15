@@ -66,7 +66,7 @@
 <hlm-alert-dialog #cancelDialog [disableClose]="cancelling()">
  <hlm-alert-dialog-content *hlmAlertDialogPortal class="max-h-[85dvh] overflow-y-auto sm:max-w-lg">
   <hlm-alert-dialog-header><h2 hlmAlertDialogTitle>Cancel this booking?</h2><p hlmAlertDialogDescription>This will release the place. The booking will stay in the list with your name as the administrator who cancelled it.</p></hlm-alert-dialog-header>
-  @if(cancelTarget){<div hlmAlert><h3 hlmAlertTitle>{{cancelTarget.employee_name}}</h3><p hlmAlertDescription>Employee code: {{cancelTarget.employee_code}}<br>{{slotLabel(cancelTarget.slot_id)}} · Mauritius time</p></div>}
+  @if(cancelTarget){<div hlmAlert class="appointment-summary"><h3 hlmAlertTitle>{{cancelTarget.employee_name}}</h3><p hlmAlertDescription>Employee code: {{cancelTarget.employee_code}}<br>{{slotLabel(cancelTarget.slot_id)}} · Mauritius time</p></div>}
   @if(cancelError()){<div hlmAlert variant="destructive"><h3 hlmAlertTitle>Booking could not be cancelled</h3><p hlmAlertDescription>{{cancelError()}}</p></div>}
   <hlm-alert-dialog-footer><button hlmAlertDialogCancel variant="outline" [disabled]="cancelling()">Keep booking</button><button hlmAlertDialogAction variant="destructive" [disabled]="cancelling()" (click)="cancelBooking()">{{cancelling()?'Cancelling…':'Cancel booking'}}</button></hlm-alert-dialog-footer>
  </hlm-alert-dialog-content>

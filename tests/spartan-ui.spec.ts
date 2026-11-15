@@ -57,13 +57,19 @@ async function fixture(page:Page,admin=false,singleCampaign=false,manyDates=fals
 }
 
 async function chooseOption(page:Page,selector:string,text:string){await page.locator(selector).click();await page.getByRole('option',{name:text,exact:true}).click();await expect(page.getByRole('listbox')).toHaveCount(0);}
-async function chooseCampaign(page:Page,name='Workplace wellness'){await page.getByRole('tab',{name,exact:true}).click();}
+async function chooseCampaign(page:Page,name='Workplace wellness'){
+ const change=page.getByRole('button',{name:'Change campaign',exact:true});
+ if(!await change.isVisible())return;
+ await change.click();
+ await page.getByRole('tab',{name:new RegExp('^'+name)}).click();
+ await expect(page.getByRole('dialog',{name:'Change campaign',exact:true})).toHaveCount(0);
+}
 async function chooseFirstDate(page:Page){await page.locator('[data-date-choice]').first().click();}
 async function openFirstBooking(page:Page){if(!await page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true}).isVisible()){await chooseCampaign(page);await chooseFirstDate(page);}await page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true}).click();return page.getByRole('dialog',{name:'Reserve a massage',exact:true});}
 
 test('employee booking uses standard controls, field errors and confirmation',async({page})=>{
  const {errors,writes}=await fixture(page);await page.goto('/');
- await expect(page.getByRole('heading',{name:'Book your massage',exact:true})).toBeVisible();await expect(page.getByRole('tab',{name:'Workplace wellness',exact:true})).toHaveAttribute('aria-selected','true');await chooseCampaign(page);await chooseFirstDate(page);
+ await expect(page.getByRole('heading',{name:'Book your massage',exact:true})).toBeVisible();await expect(page.getByRole('heading',{name:'Workplace wellness',exact:true})).toBeVisible();await chooseCampaign(page);await chooseFirstDate(page);
  await expect(page.getByRole('button',{name:/^Select time \d/})).toHaveCount(2);
  await page.getByRole('checkbox',{name:'Available only'}).click();await expect(page.getByRole('button',{name:/^Select time \d/})).toHaveCount(1);
  const dialog=await openFirstBooking(page);await expect(dialog).toBeVisible();
@@ -173,7 +179,7 @@ test('administrator sign-in submits with Enter without sending a real email',asy
 
 test('standard component layouts remain usable on desktop and mobile',async({page})=>{
  const {errors}=await fixture(page,true);await page.setViewportSize({width:1440,height:960});await page.goto('/');
- await expect(page.getByRole('tab',{name:'Workplace wellness',exact:true})).toHaveAttribute('aria-selected','true');await page.screenshot({path:'artifacts/spartan-home-start.png',fullPage:true});await chooseCampaign(page);await chooseFirstDate(page);await expect(page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true})).toBeVisible();await page.screenshot({path:'artifacts/spartan-home-desktop.png',fullPage:true});
+ await expect(page.getByRole('heading',{name:'Workplace wellness',exact:true})).toBeVisible();await page.screenshot({path:'artifacts/spartan-home-start.png',fullPage:true});await chooseCampaign(page);await chooseFirstDate(page);await expect(page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true})).toBeVisible();await page.screenshot({path:'artifacts/spartan-home-desktop.png',fullPage:true});
  await page.setViewportSize({width:375,height:812});await expect(page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true})).toHaveCSS('height','44px');await page.screenshot({path:'artifacts/spartan-home-mobile.png',fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);
  const booking=await openFirstBooking(page);await expect(booking).toBeVisible();await booking.evaluate(el=>Promise.all(el.getAnimations({subtree:true}).map(a=>a.finished.catch(()=>{}))));await page.screenshot({path:'artifacts/spartan-dialog-mobile.png',fullPage:true});expect(await booking.evaluate(el=>el.scrollWidth>el.clientWidth)).toBe(false);await page.keyboard.press('Escape');await expect(booking).toHaveCount(0);
  await page.goto('/bk-admin-codex');
@@ -252,7 +258,6 @@ test('employee loading preserves static labels and shows skeleton table cells',a
  await page.goto('/');
  const loading=page.getByRole('status',{name:'Loading campaigns and available times',exact:true});
  for(const name of ['Date','Available times'])await expect(loading.getByRole('heading',{name,exact:true})).toBeVisible();
- await expect(page.getByRole('heading',{name:'Choose your session',exact:true})).toBeVisible();
  await expect(loading.getByRole('columnheader',{name:'Time',exact:true})).toBeVisible();
  await expect(loading.getByRole('columnheader',{name:'Availability',exact:true})).toBeVisible();
  await expect(loading.locator('tbody tr')).toHaveCount(4);
@@ -260,7 +265,7 @@ test('employee loading preserves static labels and shows skeleton table cells',a
  await expect(loading.getByRole('button',{name:'Select time',exact:true})).toHaveCount(0);
  release();await expect(loading).toHaveCount(0);
  await expect(page.getByRole('heading',{name:'Available times',exact:true})).toBeVisible();
- await expect(page.getByRole('tab',{name:'Workplace wellness',exact:true})).toHaveAttribute('aria-selected','true');
+ await expect(page.getByRole('heading',{name:'Workplace wellness',exact:true})).toBeVisible();
  expect(errors).toEqual([]);
 });
 
@@ -313,12 +318,12 @@ test('admin sidebar collapses to icons with account menu and no navbar',async({p
 });
 
 
-test('paginated campaign tabs support pointer and keyboard selection',async({page})=>{
- const {errors}=await fixture(page);await page.goto('/');const first=page.getByRole('tab',{name:'Workplace wellness',exact:true});const second=page.getByRole('tab',{name:'Second campaign',exact:true});await expect(first).toHaveAttribute('aria-selected','true');await expect(page.locator('[data-slot="tabs-paginated-list"]').first()).toBeVisible();await expect(page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true})).toBeVisible();await second.click();await expect(second).toHaveAttribute('aria-selected','true');await expect(page.getByRole('button',{name:'Select time 11:00 – 11:30',exact:true})).toBeVisible();await first.focus();await page.keyboard.press('Enter');await expect(first).toHaveAttribute('aria-selected','true');expect(errors).toEqual([]);
+test('campaign dialog supports pointer and keyboard selection',async({page})=>{
+ const {errors}=await fixture(page);await page.goto('/');await expect(page.getByRole('heading',{name:'Workplace wellness',exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true})).toBeVisible();await chooseCampaign(page,'Second campaign');await expect(page.getByRole('heading',{name:'Second campaign',exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'Select time 11:00 – 11:30',exact:true})).toBeVisible();await page.getByRole('button',{name:'Change campaign',exact:true}).click();await page.screenshot({path:'artifacts/spartan-campaign-picker.png',fullPage:true});await page.getByRole('tab',{name:/^Workplace wellness/}).focus();await page.keyboard.press('Enter');await expect(page.getByRole('heading',{name:'Workplace wellness',exact:true})).toBeVisible();expect(errors).toEqual([]);
 });
 
 test('a single campaign is selected automatically',async({page})=>{
- const {errors}=await fixture(page,false,true);await page.goto('/');await expect(page.getByRole('tab',{name:'Workplace wellness',exact:true})).toHaveAttribute('aria-selected','true');await expect(page.getByRole('combobox')).toHaveCount(0);await expect(page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true})).toBeVisible();expect(errors).toEqual([]);
+ const {errors}=await fixture(page,false,true);await page.goto('/');await expect(page.getByRole('heading',{name:'Workplace wellness',exact:true})).toBeVisible();await expect(page.getByRole('combobox')).toHaveCount(0);await expect(page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true})).toBeVisible();expect(errors).toEqual([]);
 });
 
 test('Spartan Select shows readable filter and booking destination labels',async({page})=>{
@@ -402,9 +407,9 @@ test('attendees open on a mobile tap and close outside or with Escape',async({br
 });
 
 test('many dates paginate with a white selected dot and no mobile overflow',async({page})=>{
- const {errors}=await fixture(page,false,false,true);await page.setViewportSize({width:375,height:812});await page.goto('/');const dates=page.locator('[data-date-choice]');await expect(dates).toHaveCount(14);const first=dates.first();await expect(first).toHaveAttribute('aria-selected','true');await expect(first.locator('span span')).toHaveCSS('background-color','rgb(255, 255, 255)');await expect(first).toHaveCSS('background-color','rgb(0, 0, 0)');
- const campaign=page.getByRole('tab',{name:'Workplace wellness',exact:true});expect((await first.boundingBox())!.height).toBe((await campaign.boundingBox())!.height);const book=page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true});const full=page.getByRole('button',{name:'Select time 10:00 – 10:30',exact:true});expect((await book.boundingBox())!.width).toBe((await full.boundingBox())!.width);
- const strip=page.locator('hlm-paginated-tabs-list').nth(1);const next=strip.locator('[data-pagination="next"]');await expect(next).toBeVisible();await next.click();await dates.last().focus();await page.keyboard.press('Enter');await expect(dates.last()).toHaveAttribute('aria-selected','true');await expect(dates.last().locator('span span')).toHaveCSS('background-color','rgb(255, 255, 255)');expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);expect(errors).toEqual([]);
+ const {errors}=await fixture(page,false,false,true);await page.setViewportSize({width:375,height:812});await page.goto('/');const dates=page.locator('[data-date-choice]');await expect(dates).toHaveCount(14);const first=dates.first();await expect(first).toHaveAttribute('aria-selected','true');await expect(first.locator('span span')).toHaveCSS('background-color','rgb(255, 255, 255)');await expect(first).toHaveCSS('background-color','rgb(35, 75, 60)');
+ const book=page.getByRole('button',{name:'Select time 09:00 – 09:30',exact:true});const full=page.getByRole('button',{name:'Select time 10:00 – 10:30',exact:true});expect((await book.boundingBox())!.width).toBe((await full.boundingBox())!.width);
+ const strip=page.locator('hlm-paginated-tabs-list').first();const next=strip.locator('[data-pagination="next"]');await expect(next).toBeVisible();await next.click();await dates.last().focus();await page.keyboard.press('Enter');await expect(dates.last()).toHaveAttribute('aria-selected','true');await expect(dates.last().locator('span span')).toHaveCSS('background-color','rgb(255, 255, 255)');expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);expect(errors).toEqual([]);
 });
 
 
